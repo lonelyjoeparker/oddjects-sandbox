@@ -1,0 +1,94 @@
+---
+title: "Plot UK crime data"
+author: '[Joe Parker/@lonelyjoeparker](https://github.com/lonelyjoeparker)'
+date: '2018-01-12'
+output:
+  html_document: default
+  html_notebook: default
+---
+
+Quick exercise in plotting UK national crime database data using OpenStreetMap, and fitting a contour (kernel density estimator) function for 2-D spatial smoothing.
+
+## 1. Prerequisites
+
+```{r}
+# First the required packages.
+# The top-level ones are OpenStreetMap, MASS and ks
+# Other dependencies below this include:
+#   X11, rgl, rgdal
+
+# On linux this will mean something like:
+#   sudo apt-get update && sudo apt-get install libcgal-dev libglu1-mesa-dev libglu1-mesa-dev libx11-dev gdal-bin gdal-config
+
+# I googled the shit out of this, BTW:
+#   https://stackoverflow.com/questions/15248815/rgdal-package-installation
+
+# install.packages("OpenStreetMap")
+# install.packages("ks")
+# install.packages("MASS")
+
+# load required libs
+library(OpenStreetMap)
+library(MASS)
+library(ks)
+
+# Get the crime data itself
+# From e.g. https://wwww.police.uk/surrey/RUCM/crime/stats
+# Saved to ~/Downloads/c1b1d294-4b4b-4a47-8f9c-4dcd7af9e56a.csv
+crime <- read.csv("~/Downloads/c1b1d294-4b4b-4a47-8f9c-4dcd7af9e56a.csv")
+head(crime)
+```
+The timestamps here aren't important but might as well convert them:
+```{r}
+crime$datmon <- as.Date(paste(crime$Month,'-01',sep=''))
+```
+
+## Plotting raster maps
+
+Now we're ready to plot the map itself. Notes from https://www.r-bloggers.com/plot-maps-like-a-boss/. 
+```{r}
+# get the map
+chertsey <- (openmap(c(51.40,-0.52), c(51.37,-0.48)))
+plot(chertsey)
+```
+Looks cool! 
+
+Note, `map()` takes a top-left then bottom-right pair, e.g. `map(c(x1,y1),c(x2,y2))` where x will be longitude and y latitude co-ords. This produces a plotting device you can add to like any other `plot()` call, *BUT* without transformation/projection the points returned in e.g. OpenStreetMap will be in (I think) metres N and E from the equator/meridien (I think). This means that to plot points on them directly you have to do some guessing:
+```{r}
+plot(chertsey)
+abline(v=seq(-57886,0,length.out=30),col="green",lwd=4)
+# wtf?
+```
+
+## 3. Co-ordinate projection and surface prediction
+
+The lines appear at seemingly crazy intervals ("aren't these lat/long co-ordinates? What does a longitude of '-57,000' mean?!"). This is because, importantly, the crime dataset lat/long points refer to a flat 2D surface, whereas we need to project to the OpenStreetMap spheroid. 
+
+Finally we can plot and visualise our surface:
+
+```{r}
+#transform map from OpenStreetMap co-ords to 2D lat-long projection
+map_ll <- openproj(chertsey,projection="+proj=longlat")
+
+# plot map
+plot(map_ll)
+
+# plot individual crimes on the map in big fat purple
+points(Latitude~Longitude,data=crime,col="purple",pch=19,cex=1.5)
+
+# create a contour (surface) plot using KDE
+crm <- kde2d(crime$Longitude,crime$Latitude)
+
+# add the contour
+contour(crm,add=TRUE,col=rev(heat.colors(11)),lwd=5)
+```
+Hey presto! 
+
+BTW we might also wonder if particular categories of crime occur in particular places. I can't be arsed to do this in full but clearly we'd subset the data, etc. Quick check with `boxplot()` tho:
+
+```{r}
+boxplot(Latitude~Category,data=crime)
+boxplot(Longitude~Category,data=crime)
+```
+
+So... there aren't really any particular locations more/less prone to any type of crime.
