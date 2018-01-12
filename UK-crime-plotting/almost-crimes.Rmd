@@ -7,8 +7,10 @@ output:
   html_notebook: default
 ---
 
-Quick exercise in plotting UK national crime database data using OpenStreetMap, and fitting a contour (kernel density estimator) function for 2-D spatial smoothing.
+Quick exercise in plotting UK national crime database data using OpenStreetMap, and fitting a contour (kernel density estimator) function for 2-D spatial smoothing. Will end up looking something like:
 
+![Example of crime data plotted onto OpenStreetMap, with plotting function](./chertsey_crime.png)
+ 
 ## 1. Prerequisites
 
 ```{r}
