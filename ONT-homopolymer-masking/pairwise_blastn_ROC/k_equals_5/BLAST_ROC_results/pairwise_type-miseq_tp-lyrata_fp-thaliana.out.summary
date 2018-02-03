@@ -1,0 +1,18 @@
+BLAST hits comparison
+(assumes IDENTICAL queries to each BLAST database, IDENTICAL parameters, and max_hits=1, max_hsps=1)
+BLAST input 1:	./BLAST_ROC_results/2d_type-miseq_db-lyrata_query-lyrata.out
+BLAST input 2:	./BLAST_ROC_results/2c_type-miseq_db-thaliana_query-lyrata.out
+Total hits report:
+Number of query sequences with hits present in both:	3828738
+Stats
+	Cumulative length bias (./BLAST_ROC_results/2d_type-miseq_db-lyrata_query-lyrata.out: 1308036760 - ./BLAST_ROC_results/2c_type-miseq_db-thaliana_query-lyrata.out: 897296863)	+410739897	1308036760	897296863
+	Cumulative identities bias (./BLAST_ROC_results/2d_type-miseq_db-lyrata_query-lyrata.out: 1280661850.84946 - ./BLAST_ROC_results/2c_type-miseq_db-thaliana_query-lyrata.out: 838612392.568731)	+442049458.280732	1280661850.84946	838612392.568731
+	Cumulative % identities bias (./BLAST_ROC_results/2d_type-miseq_db-lyrata_query-lyrata.out: 520876359.090667 - ./BLAST_ROC_results/2c_type-miseq_db-thaliana_query-lyrata.out: 358117166.340096)	+162759192.750571	520876359.090667	358117166.340096
+	Cumulative evalues bias (./BLAST_ROC_results/2d_type-miseq_db-lyrata_query-lyrata.out: 0.00846645122825293 - ./BLAST_ROC_results/2c_type-miseq_db-thaliana_query-lyrata.out: 0.022351400181096)	+1.388495e-02	0.00846645122825293	0.022351400181096
+	mean length bias (./BLAST_ROC_results/2d_type-miseq_db-lyrata_query-lyrata.out: 341.636528798784 - ./BLAST_ROC_results/2c_type-miseq_db-thaliana_query-lyrata.out: 234.358387280613)	+107.278142	341.636528798784	234.358387280613
+	mean identities bias (./BLAST_ROC_results/2d_type-miseq_db-lyrata_query-lyrata.out: 334.486677032866 - ./BLAST_ROC_results/2c_type-miseq_db-thaliana_query-lyrata.out: 219.031020813838)	+115.455656	334.486677032866	219.031020813838
+	mean % identities bias (./BLAST_ROC_results/2d_type-miseq_db-lyrata_query-lyrata.out: 136.043876361001 - ./BLAST_ROC_results/2c_type-miseq_db-thaliana_query-lyrata.out: 93.533996408241)	+42.509880	136.043876361001	93.533996408241
+	mean evalues bias (./BLAST_ROC_results/2d_type-miseq_db-lyrata_query-lyrata.out: 2.21129030721165e-09 - ./BLAST_ROC_results/2c_type-miseq_db-thaliana_query-lyrata.out: 5.83779829831552e-09)	+3.626508e-09	2.21129030721165e-09	5.83779829831552e-09
+Unique hits
+./BLAST_ROC_results/2d_type-miseq_db-lyrata_query-lyrata.out	1495934
+./BLAST_ROC_results/2c_type-miseq_db-thaliana_query-lyrata.out	12206

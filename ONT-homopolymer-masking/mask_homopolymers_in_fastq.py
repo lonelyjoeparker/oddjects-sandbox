@@ -45,11 +45,11 @@ masked_sequences = list()
 with args.input_file as file:
     sequence_file_iterator = SeqIO.parse(file,'fastq')
     for record in sequence_file_iterator:
-        print(record.description)
+        # print(record.description)
         this_starting_seq = str(record.seq)
-        print(record.seq)
+        # print(record.seq)
         masked_seq = homopolymer_a.sub(homopolymer_a_replace,homopolymer_c.sub(homopolymer_c_replace,homopolymer_g.sub(homopolymer_g_replace,homopolymer_t.sub(homopolymer_t_replace,this_starting_seq))))
-        print(masked_seq)
+        # print(masked_seq)
         new_sequence = SeqRecord.SeqRecord(id=record.id,seq=Seq(masked_seq),name=record.name,description=record.description)
         masked_sequences.append(new_sequence)
 

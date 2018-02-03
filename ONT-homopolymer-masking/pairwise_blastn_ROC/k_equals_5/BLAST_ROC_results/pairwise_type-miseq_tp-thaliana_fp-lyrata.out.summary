@@ -1,0 +1,18 @@
+BLAST hits comparison
+(assumes IDENTICAL queries to each BLAST database, IDENTICAL parameters, and max_hits=1, max_hsps=1)
+BLAST input 1:	./BLAST_ROC_results/2a_type-miseq_db-thaliana_query-thaliana.out
+BLAST input 2:	./BLAST_ROC_results/2b_type-miseq_db-lyrata_query-thaliana.out
+Total hits report:
+Number of query sequences with hits present in both:	4304824
+Stats
+	Cumulative length bias (./BLAST_ROC_results/2a_type-miseq_db-thaliana_query-thaliana.out: 1369699317 - ./BLAST_ROC_results/2b_type-miseq_db-lyrata_query-thaliana.out: 1023653016)	+346046301	1369699317	1023653016
+	Cumulative identities bias (./BLAST_ROC_results/2a_type-miseq_db-thaliana_query-thaliana.out: 1347500872.41329 - ./BLAST_ROC_results/2b_type-miseq_db-lyrata_query-thaliana.out: 953388087.260578)	+394112785.152709	1347500872.41329	953388087.260578
+	Cumulative % identities bias (./BLAST_ROC_results/2a_type-miseq_db-thaliana_query-thaliana.out: 524134099.370714 - ./BLAST_ROC_results/2b_type-miseq_db-lyrata_query-thaliana.out: 403142423.090029)	+120991676.280685	524134099.370714	403142423.090029
+	Cumulative evalues bias (./BLAST_ROC_results/2a_type-miseq_db-thaliana_query-thaliana.out: 0.00065059555632707 - ./BLAST_ROC_results/2b_type-miseq_db-lyrata_query-thaliana.out: 0.0500791185641233)	+4.942852e-02	0.00065059555632707	0.0500791185641233
+	mean length bias (./BLAST_ROC_results/2a_type-miseq_db-thaliana_query-thaliana.out: 318.177773818395 - ./BLAST_ROC_results/2b_type-miseq_db-lyrata_query-thaliana.out: 237.792071406404)	+80.385702	318.177773818395	237.792071406404
+	mean identities bias (./BLAST_ROC_results/2a_type-miseq_db-thaliana_query-thaliana.out: 313.021129879709 - ./BLAST_ROC_results/2b_type-miseq_db-lyrata_query-thaliana.out: 221.469701725455)	+91.551428	313.021129879709	221.469701725455
+	mean % identities bias (./BLAST_ROC_results/2a_type-miseq_db-thaliana_query-thaliana.out: 121.755058829516 - ./BLAST_ROC_results/2b_type-miseq_db-lyrata_query-thaliana.out: 93.6489907810467)	+28.106068	121.755058829516	93.6489907810467
+	mean evalues bias (./BLAST_ROC_results/2a_type-miseq_db-thaliana_query-thaliana.out: 1.51131743441095e-10 - ./BLAST_ROC_results/2b_type-miseq_db-lyrata_query-thaliana.out: 1.16332557531094e-08)	+1.148212e-08	1.51131743441095e-10	1.16332557531094e-08
+Unique hits
+./BLAST_ROC_results/2a_type-miseq_db-thaliana_query-thaliana.out	1025751
+./BLAST_ROC_results/2b_type-miseq_db-lyrata_query-thaliana.out	29877

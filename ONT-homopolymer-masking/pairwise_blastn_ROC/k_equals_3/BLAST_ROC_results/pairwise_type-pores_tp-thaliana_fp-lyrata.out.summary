@@ -1,0 +1,18 @@
+BLAST hits comparison
+(assumes IDENTICAL queries to each BLAST database, IDENTICAL parameters, and max_hits=1, max_hsps=1)
+BLAST input 1:	./BLAST_ROC_results/1a_type-pores_db-thaliana_query-thaliana.out
+BLAST input 2:	./BLAST_ROC_results/1b_type-pores_db-lyrata_query-thaliana.out
+Total hits report:
+Number of query sequences with hits present in both:	23363
+Stats
+	Cumulative length bias (./BLAST_ROC_results/1a_type-pores_db-thaliana_query-thaliana.out: 50267020 - ./BLAST_ROC_results/1b_type-pores_db-lyrata_query-thaliana.out: 26911388)	+23355632	50267020	26911388
+	Cumulative identities bias (./BLAST_ROC_results/1a_type-pores_db-thaliana_query-thaliana.out: 41467480.6940999 - ./BLAST_ROC_results/1b_type-pores_db-lyrata_query-thaliana.out: 22009512.4780999)	+19457968.216000	41467480.6940999	22009512.4780999
+	Cumulative % identities bias (./BLAST_ROC_results/1a_type-pores_db-thaliana_query-thaliana.out: 2651717.34999999 - ./BLAST_ROC_results/1b_type-pores_db-lyrata_query-thaliana.out: 1988032.37)	+663684.980000	2651717.34999999	1988032.37
+	Cumulative evalues bias (./BLAST_ROC_results/1a_type-pores_db-thaliana_query-thaliana.out: 0.00166494981612583 - ./BLAST_ROC_results/1b_type-pores_db-lyrata_query-thaliana.out: 0.0128332646030423)	+1.116831e-02	0.00166494981612583	0.0128332646030423
+	mean length bias (./BLAST_ROC_results/1a_type-pores_db-thaliana_query-thaliana.out: 2151.5652955528 - ./BLAST_ROC_results/1b_type-pores_db-lyrata_query-thaliana.out: 1151.88066601036)	+999.684630	2151.5652955528	1151.88066601036
+	mean identities bias (./BLAST_ROC_results/1a_type-pores_db-thaliana_query-thaliana.out: 1774.92105868681 - ./BLAST_ROC_results/1b_type-pores_db-lyrata_query-thaliana.out: 942.067049527027)	+832.854009	1774.92105868681	942.067049527027
+	mean % identities bias (./BLAST_ROC_results/1a_type-pores_db-thaliana_query-thaliana.out: 113.50072122587 - ./BLAST_ROC_results/1b_type-pores_db-lyrata_query-thaliana.out: 85.0931973633521)	+28.407524	113.50072122587	85.0931973633521
+	mean evalues bias (./BLAST_ROC_results/1a_type-pores_db-thaliana_query-thaliana.out: 7.12643845450428e-08 - ./BLAST_ROC_results/1b_type-pores_db-lyrata_query-thaliana.out: 5.49298660405012e-07)	+4.780343e-07	7.12643845450428e-08	5.49298660405012e-07
+Unique hits
+./BLAST_ROC_results/1a_type-pores_db-thaliana_query-thaliana.out	8711
+./BLAST_ROC_results/1b_type-pores_db-lyrata_query-thaliana.out	796

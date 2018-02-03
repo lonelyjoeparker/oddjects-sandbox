@@ -1,0 +1,18 @@
+BLAST hits comparison
+(assumes IDENTICAL queries to each BLAST database, IDENTICAL parameters, and max_hits=1, max_hsps=1)
+BLAST input 1:	./BLAST_ROC_results/1d_type-pores_db-lyrata_query-lyrata.out
+BLAST input 2:	./BLAST_ROC_results/1c_type-pores_db-thaliana_query-lyrata.out
+Total hits report:
+Number of query sequences with hits present in both:	107
+Stats
+	Cumulative length bias (./BLAST_ROC_results/1d_type-pores_db-lyrata_query-lyrata.out: 193977 - ./BLAST_ROC_results/1c_type-pores_db-thaliana_query-lyrata.out: 117833)	+76144	193977	117833
+	Cumulative identities bias (./BLAST_ROC_results/1d_type-pores_db-lyrata_query-lyrata.out: 158795.4932 - ./BLAST_ROC_results/1c_type-pores_db-thaliana_query-lyrata.out: 95687.7882)	+63107.705000	158795.4932	95687.7882
+	Cumulative % identities bias (./BLAST_ROC_results/1d_type-pores_db-lyrata_query-lyrata.out: 15420.92 - ./BLAST_ROC_results/1c_type-pores_db-thaliana_query-lyrata.out: 8828.6)	+6592.320000	15420.92	8828.6
+	Cumulative evalues bias (./BLAST_ROC_results/1d_type-pores_db-lyrata_query-lyrata.out: 0.000500634220857003 - ./BLAST_ROC_results/1c_type-pores_db-thaliana_query-lyrata.out: 0.0110000000472001)	+1.049937e-02	0.000500634220857003	0.0110000000472001
+	mean length bias (./BLAST_ROC_results/1d_type-pores_db-lyrata_query-lyrata.out: 1812.8691588785 - ./BLAST_ROC_results/1c_type-pores_db-thaliana_query-lyrata.out: 1101.24299065421)	+711.626168	1812.8691588785	1101.24299065421
+	mean identities bias (./BLAST_ROC_results/1d_type-pores_db-lyrata_query-lyrata.out: 1484.07002990654 - ./BLAST_ROC_results/1c_type-pores_db-thaliana_query-lyrata.out: 894.278394392523)	+589.791636	1484.07002990654	894.278394392523
+	mean % identities bias (./BLAST_ROC_results/1d_type-pores_db-lyrata_query-lyrata.out: 144.120747663551 - ./BLAST_ROC_results/1c_type-pores_db-thaliana_query-lyrata.out: 82.5102803738318)	+61.610467	144.120747663551	82.5102803738318
+	mean evalues bias (./BLAST_ROC_results/1d_type-pores_db-lyrata_query-lyrata.out: 4.67882449399068e-06 - ./BLAST_ROC_results/1c_type-pores_db-thaliana_query-lyrata.out: 0.000102803738758879)	+9.812491e-05	4.67882449399068e-06	0.000102803738758879
+Unique hits
+./BLAST_ROC_results/1d_type-pores_db-lyrata_query-lyrata.out	80
+./BLAST_ROC_results/1c_type-pores_db-thaliana_query-lyrata.out	2
