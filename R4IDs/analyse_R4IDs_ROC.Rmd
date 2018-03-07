@@ -1,0 +1,11 @@
+```{r}
+library(ROCR)
+
+# read in the input for each labelling / subsampling size
+
+# cbind them all into a big table, adding the 'training_intensity' and 'query_intensity' cols
+
+# calculate TP rate for a variety of cutoffs
+
+# plot heatmap prediction
+```
