@@ -222,6 +222,18 @@ boxplot(two_way_rate_with_cutoff ~ log10(sample_DB_intensity),data=all_reps, col
 boxplot(total_hits ~ log10(sample_DB_intensity),data=all_reps, col.regions = heat.colors(100)[length(heat.colors(100)):1], xlab='log10 sampling effort',ylab='total_hits')
 ```
 
+Final summary; ploting expected positive reads vs total sampling intensity:
+```{r}
+levelplot(total_hits ~ log10(sample_DB_intensity)*log10(species_DB_intensity),data=all_reps, col.regions = heat.colors(100)[length(heat.colors(100)):1], main="total hits") 
+levelplot(two_way_rate*total_hits ~ log10(sample_DB_intensity)*log10(species_DB_intensity),data=all_reps, col.regions = heat.colors(100)[length(heat.colors(100)):1], main="true positive hits expectation",sub='at cutoff > 0')
+levelplot(two_way_rate_with_cutoff*total_hits ~ log10(sample_DB_intensity)*log10(species_DB_intensity),data=all_reps, col.regions = heat.colors(100)[length(heat.colors(100)):1], main="TP hit expectation, applying cutoff>50bp",sub='at cutoff > 50')
+levelplot((one_way_TP + two_way_TP) / (one_way_FP + two_way_FP+one_way_TP + two_way_TP) ~ log10(sample_DB_intensity)*log10(species_DB_intensity),data=all_reps, col.regions = heat.colors(100)[length(heat.colors(100)):1], main="TP:FP+TP")    
+levelplot((one_way_FP + two_way_FP) / (one_way_FP + two_way_FP+one_way_TP + two_way_TP) ~ log10(sample_DB_intensity)*log10(species_DB_intensity),data=all_reps, col.regions = heat.colors(100)[length(heat.colors(100)):1], main="FP:FP+TP")    
+levelplot(((one_way_TP + two_way_TP) / (one_way_FP + two_way_FP+one_way_TP + two_way_TP)*total_hits) ~ log10(sample_DB_intensity)*log10(species_DB_intensity),data=all_reps, col.regions = heat.colors(100)[length(heat.colors(100)):1], main="expected reads TP:FP+TP")    
+levelplot(((one_way_FP + two_way_FP) / (one_way_FP + two_way_FP+one_way_TP + two_way_TP)*total_hits) ~ log10(sample_DB_intensity)*log10(species_DB_intensity),data=all_reps, col.regions = heat.colors(100)[length(heat.colors(100)):1], main="expected reads FP:FP+TP")    
+#levelplot((one_way_TP + two_way_TP) / total_hits ~ log10(sample_DB_intensity)*log10(species_DB_intensity),data=all_reps, col.regions = heat.colors(100)[length(heat.colors(100)):1], main="total TP:all_hits")  
+```
+
 # Conclusion
 
 Overall it seems to be working fine, e.g. we get hits and length differences that tend to correct at low intensities (10E4 is a bloody small amount of sequencing..!)
