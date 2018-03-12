@@ -1,0 +1,10 @@
+version: '3'
+services:
+  training:
+    build: ./training
+  test:
+    build: ./test
+  visualisation:
+    build: ./visualisation
+    ports:
+     - "80:80"
