@@ -5,6 +5,6 @@ services:
   resequencing:
     image: lonelyjoeparker/r4ids:r4ids-resequencing-v0.1
   visualisation:
-    image: lonelyjoeparker/r4ids:r4ids-resequencing-v0.1
+    image: lonelyjoeparker/r4ids:r4ids-visualisation-v0.1
     ports:
      - "80:80"
