@@ -9,6 +9,7 @@
 # Provide`s NCBI BLAST+ binaries, mainly for use with Galaxy Project dockerised runners
 
 FROM ubuntu:xenial
+FROM python:2.7-slim
 
 MAINTAINER Joe Parker <joe@lonelyjoeparker.com>
 

@@ -3,9 +3,11 @@
 
 # basic PHP + Apache 
 # (see https://docs.docker.com/samples/library/php/#create-a-dockerfile-in-your-php-project-1)
+
+FROM ubuntu:xenial
 FROM php:7.0-apache
-COPY config/php.ini /usr/local/etc/php/
-COPY src/ /var/www/html/
+#COPY config/php.ini /usr/local/etc/php/
+#COPY src/ /var/www/html/
 
 MAINTAINER Joe Parker <joe@lonelyjoeparker.com>
 
