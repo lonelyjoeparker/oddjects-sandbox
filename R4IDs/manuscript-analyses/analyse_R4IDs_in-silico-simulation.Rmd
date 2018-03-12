@@ -1,0 +1,189 @@
+---
+title: "In silico R4IDs simulation"
+output:
+  pdf_document: default
+  html_notebook: default
+  html_document: default
+---
+
+## Aim: establish likely performance.
+
+# Methods
+
+A python script was used to simulate nanopore R9 sequencing runs from published **Cammelinae** genomes (~/Documents/all_work/programming/oddjects-sandbox/R4IDs/In-silico-genome-skimming-by-args.py). This used a mutation rate of 1/20 e.g. 5%. Uniformly-selected sites for mutation were assigned a substitution (equal base frequencies), point deletion, or point insertion (homopolymer created by inserting **n**th base as **n+1**th)
+
+These read sets (intensities 10, 100, 1000 and 10000 reads) were used to simulate both R4IDs set-up and ID resequencing runs as for the empirical sci-fest data, and analysed in the same way.
+
+## Input reference genomes
+
+Species | File | Mbp | # contigs
+------- | ---- | --- | ---------
+A. thaliana | () | 120 | 7
+Capsella rubella | file:////Users/joeparker/Downloads/ANNY01.1.fsa_nt.gz | 129 | 7,067
+A. halleri subsp. gemmifera | file:////Users/joeparker/Downloads/FJVB01.1.fsa_nt.gz | 196 | 2,239
+A. lyrata | () | 208 | 3645
+Capsella bursa-pastoris | file:////Users/joeparker/Downloads/MPGU01.1.fsa_nt.gz | 268 | 8,186 
+Camelina sativa | file:////Users/joeparker/Downloads/JFZQ01.1.fsa_nt.gz file:////Users/joeparker/Downloads/JFZQ01.2.fsa_nt.gz | 641 | 37,780
+
+## Nanopore sequencing simulation
+
+## Analysis
+
+```{r}
+library(lattice)
+in_silico = read.table('~/Documents/all_work/programming/oddjects-sandbox/R4IDs/in-silico.out.parsed.tdf',header=T,sep="\t")
+
+```
+
+How do stats' performance vary by species? List species in order. 
+
+First: *rate TP: total*
+
+```{r}
+levelplot((one_way_TP + two_way_TP) / total_hits ~ log10(sample_DB_intensity)*log10(species_DB_intensity),data=in_silico, col.regions = heat.colors(100)[length(heat.colors(100)):1], main="All species")
+levelplot((one_way_TP + two_way_TP) / total_hits ~ log10(sample_DB_intensity)*log10(species_DB_intensity),data=in_silico[in_silico$TP_species=='A-thaliana_02',], col.regions = heat.colors(100)[length(heat.colors(100)):1], main="A. thaliana",sub='120Mbp; 7 contigs')
+levelplot((one_way_TP + two_way_TP) / total_hits ~ log10(sample_DB_intensity)*log10(species_DB_intensity),data=in_silico[in_silico$TP_species=='C-rubella_03',], col.regions = heat.colors(100)[length(heat.colors(100)):1], main="C. rubella",sub='129Mbp; 7,067 contigs')
+levelplot((one_way_TP + two_way_TP) / total_hits ~ log10(sample_DB_intensity)*log10(species_DB_intensity),data=in_silico[in_silico$TP_species=='A-halleri_01',], col.regions = heat.colors(100)[length(heat.colors(100)):1], main="A. halleri",sub='196Mbp; 2,239 contigs')
+levelplot((one_way_TP + two_way_TP) / total_hits ~ log10(sample_DB_intensity)*log10(species_DB_intensity),data=in_silico[in_silico$TP_species=='A-lyrata_04',], col.regions = heat.colors(100)[length(heat.colors(100)):1], main="A. lyrata",sub='208Mbp; 3,645 contigs')
+levelplot((one_way_TP + two_way_TP) / total_hits ~ log10(sample_DB_intensity)*log10(species_DB_intensity),data=in_silico[in_silico$TP_species=='C-bursa_05',], col.regions = heat.colors(100)[length(heat.colors(100)):1], main="C. bursa",sub='268Mbp; 8,186 contigs')
+levelplot((one_way_TP + two_way_TP) / total_hits ~ log10(sample_DB_intensity)*log10(species_DB_intensity),data=in_silico[in_silico$TP_species=='C-sativa_06',], col.regions = heat.colors(100)[length(heat.colors(100)):1], main="C. sativa",sub='641Mbp; 37,780 contigs')
+```
+Secondly *rate TP:FP*:
+```{r}
+levelplot((one_way_TP + two_way_TP) / (one_way_FP + two_way_FP) ~ log10(sample_DB_intensity)*log10(species_DB_intensity),data=in_silico, col.regions = heat.colors(100)[length(heat.colors(100)):1], main="All species")
+levelplot((one_way_TP + two_way_TP) / (one_way_FP + two_way_FP) ~ log10(sample_DB_intensity)*log10(species_DB_intensity),data=in_silico[in_silico$TP_species=='A-thaliana_02',], col.regions = heat.colors(100)[length(heat.colors(100)):1], main="A. thaliana",sub='120Mbp; 7 contigs')
+levelplot((one_way_TP + two_way_TP) / (one_way_FP + two_way_FP) ~ log10(sample_DB_intensity)*log10(species_DB_intensity),data=in_silico[in_silico$TP_species=='C-rubella_03',], col.regions = heat.colors(100)[length(heat.colors(100)):1], main="C. rubella",sub='129Mbp; 7,067 contigs')
+levelplot((one_way_TP + two_way_TP) / (one_way_FP + two_way_FP) ~ log10(sample_DB_intensity)*log10(species_DB_intensity),data=in_silico[in_silico$TP_species=='A-halleri_01',], col.regions = heat.colors(100)[length(heat.colors(100)):1], main="A. halleri",sub='196Mbp; 2,239 contigs')
+levelplot((one_way_TP + two_way_TP) / (one_way_FP + two_way_FP) ~ log10(sample_DB_intensity)*log10(species_DB_intensity),data=in_silico[in_silico$TP_species=='A-lyrata_04',], col.regions = heat.colors(100)[length(heat.colors(100)):1], main="A. lyrata",sub='208Mbp; 3,645 contigs')
+levelplot((one_way_TP + two_way_TP) / (one_way_FP + two_way_FP) ~ log10(sample_DB_intensity)*log10(species_DB_intensity),data=in_silico[in_silico$TP_species=='C-bursa_05',], col.regions = heat.colors(100)[length(heat.colors(100)):1], main="C. bursa",sub='268Mbp; 8,186 contigs')
+levelplot((one_way_TP + two_way_TP) / (one_way_FP + two_way_FP) ~ log10(sample_DB_intensity)*log10(species_DB_intensity),data=in_silico[in_silico$TP_species=='C-sativa_06',], col.regions = heat.colors(100)[length(heat.colors(100)):1], main="C. sativa",sub='641Mbp; 37,780 contigs')
+```
+
+Thirdly *mean_bias*; first what is the aggregate length bias we can expect (as in the sci fest GUI)?
+```{r}
+levelplot(two_way_rate*total_hits ~ log10(sample_DB_intensity)*log10(species_DB_intensity),data=in_silico, col.regions = heat.colors(100)[length(heat.colors(100)):1], main="Expected aggregate BLAST alignment bias",xlab='log10 sample reads resequenced', ylab='log10 training reads sequenced to build R4ID database')
+# boxplots by intensity to see confidence intervals
+par(mfrow=c(1,2))
+boxplot(log10(two_way_rate*total_hits) ~ log10(sample_DB_intensity),data=in_silico, main="Expected aggregate BLAST alignment bias",xlab='log10 sample reads resequenced', ylab='Expected aggregate BLAST alignment bias')
+boxplot(log10(two_way_rate*total_hits) ~ log10(species_DB_intensity),data=in_silico, main="Expected aggregate BLAST alignment bias",xlab='log10 R4ID sequencing effort', ylab='Expected aggregate BLAST alignment bias')
+```
+And the bias itself?
+```{r}
+levelplot(log10(mean_bias) ~ log10(sample_DB_intensity)*log10(species_DB_intensity),data=in_silico, col.regions = heat.colors(100)[length(heat.colors(100)):1], main="All species")
+levelplot(mean_bias ~ log10(sample_DB_intensity)*log10(species_DB_intensity),data=in_silico[in_silico$TP_species=='A-thaliana_02',], col.regions = heat.colors(100)[length(heat.colors(100)):1], main="A. thaliana",sub='120Mbp; 7 contigs')
+levelplot(mean_bias ~ log10(sample_DB_intensity)*log10(species_DB_intensity),data=in_silico[in_silico$TP_species=='C-rubella_03',], col.regions = heat.colors(100)[length(heat.colors(100)):1], main="C. rubella",sub='129Mbp; 7,067 contigs')
+levelplot(mean_bias ~ log10(sample_DB_intensity)*log10(species_DB_intensity),data=in_silico[in_silico$TP_species=='A-halleri_01',], col.regions = heat.colors(100)[length(heat.colors(100)):1], main="A. halleri",sub='196Mbp; 2,239 contigs')
+levelplot(mean_bias ~ log10(sample_DB_intensity)*log10(species_DB_intensity),data=in_silico[in_silico$TP_species=='A-lyrata_04',], col.regions = heat.colors(100)[length(heat.colors(100)):1], main="A. lyrata",sub='208Mbp; 3,645 contigs')
+levelplot(mean_bias ~ log10(sample_DB_intensity)*log10(species_DB_intensity),data=in_silico[in_silico$TP_species=='C-bursa_05',], col.regions = heat.colors(100)[length(heat.colors(100)):1], main="C. bursa",sub='268Mbp; 8,186 contigs')
+levelplot(mean_bias ~ log10(sample_DB_intensity)*log10(species_DB_intensity),data=in_silico[in_silico$TP_species=='C-sativa_06',], col.regions = heat.colors(100)[length(heat.colors(100)):1], main="C. sativa",sub='641Mbp; 37,780 contigs')
+```
+
+Fourth *hit rate in 2-way assignments*
+```{r}
+levelplot(two_way_rate ~ log10(sample_DB_intensity)*log10(species_DB_intensity),data=in_silico, col.regions = heat.colors(100)[length(heat.colors(100)):1], main="All species")
+levelplot(two_way_rate ~ log10(sample_DB_intensity)*log10(species_DB_intensity),data=in_silico[in_silico$TP_species=='A-thaliana_02',], col.regions = heat.colors(100)[length(heat.colors(100)):1], main="A. thaliana",sub='120Mbp; 7 contigs')
+levelplot(two_way_rate ~ log10(sample_DB_intensity)*log10(species_DB_intensity),data=in_silico[in_silico$TP_species=='C-rubella_03',], col.regions = heat.colors(100)[length(heat.colors(100)):1], main="C. rubella",sub='129Mbp; 7,067 contigs')
+levelplot(two_way_rate ~ log10(sample_DB_intensity)*log10(species_DB_intensity),data=in_silico[in_silico$TP_species=='A-halleri_01',], col.regions = heat.colors(100)[length(heat.colors(100)):1], main="A. halleri",sub='196Mbp; 2,239 contigs')
+levelplot(two_way_rate ~ log10(sample_DB_intensity)*log10(species_DB_intensity),data=in_silico[in_silico$TP_species=='A-lyrata_04',], col.regions = heat.colors(100)[length(heat.colors(100)):1], main="A. lyrata",sub='208Mbp; 3,645 contigs')
+levelplot(two_way_rate ~ log10(sample_DB_intensity)*log10(species_DB_intensity),data=in_silico[in_silico$TP_species=='C-bursa_05',], col.regions = heat.colors(100)[length(heat.colors(100)):1], main="C. bursa",sub='268Mbp; 8,186 contigs')
+levelplot(two_way_rate ~ log10(sample_DB_intensity)*log10(species_DB_intensity),data=in_silico[in_silico$TP_species=='C-sativa_06',], col.regions = heat.colors(100)[length(heat.colors(100)):1], main="C. sativa",sub='641Mbp; 37,780 contigs')
+```
+
+Fifth *hit rate in 2-way assignments, with cutoff>50*
+```{r}
+levelplot(two_way_rate_with_cutoff ~ log10(sample_DB_intensity)*log10(species_DB_intensity),data=in_silico, col.regions = heat.colors(100)[length(heat.colors(100)):1], main="All species")
+levelplot(two_way_rate_with_cutoff ~ log10(sample_DB_intensity)*log10(species_DB_intensity),data=in_silico[in_silico$TP_species=='A-thaliana_02',], col.regions = heat.colors(100)[length(heat.colors(100)):1], main="A. thaliana",sub='120Mbp; 7 contigs')
+levelplot(two_way_rate_with_cutoff ~ log10(sample_DB_intensity)*log10(species_DB_intensity),data=in_silico[in_silico$TP_species=='C-rubella_03',], col.regions = heat.colors(100)[length(heat.colors(100)):1], main="C. rubella",sub='129Mbp; 7,067 contigs')
+levelplot(two_way_rate_with_cutoff ~ log10(sample_DB_intensity)*log10(species_DB_intensity),data=in_silico[in_silico$TP_species=='A-halleri_01',], col.regions = heat.colors(100)[length(heat.colors(100)):1], main="A. halleri",sub='196Mbp; 2,239 contigs')
+levelplot(two_way_rate_with_cutoff ~ log10(sample_DB_intensity)*log10(species_DB_intensity),data=in_silico[in_silico$TP_species=='A-lyrata_04',], col.regions = heat.colors(100)[length(heat.colors(100)):1], main="A. lyrata",sub='208Mbp; 3,645 contigs')
+levelplot(two_way_rate_with_cutoff ~ log10(sample_DB_intensity)*log10(species_DB_intensity),data=in_silico[in_silico$TP_species=='C-bursa_05',], col.regions = heat.colors(100)[length(heat.colors(100)):1], main="C. bursa",sub='268Mbp; 8,186 contigs')
+levelplot(two_way_rate_with_cutoff ~ log10(sample_DB_intensity)*log10(species_DB_intensity),data=in_silico[in_silico$TP_species=='C-sativa_06',], col.regions = heat.colors(100)[length(heat.colors(100)):1], main="C. sativa",sub='641Mbp; 37,780 contigs')
+```
+
+Finally *total hits*
+```{r}
+levelplot(total_hits ~ log10(sample_DB_intensity)*log10(species_DB_intensity),data=in_silico, col.regions = heat.colors(100)[length(heat.colors(100)):1], main="All species")
+levelplot(total_hits ~ log10(sample_DB_intensity)*log10(species_DB_intensity),data=in_silico[in_silico$TP_species=='A-thaliana_02',], col.regions = heat.colors(100)[length(heat.colors(100)):1], main="A. thaliana",sub='120Mbp; 7 contigs')
+levelplot(total_hits ~ log10(sample_DB_intensity)*log10(species_DB_intensity),data=in_silico[in_silico$TP_species=='C-rubella_03',], col.regions = heat.colors(100)[length(heat.colors(100)):1], main="C. rubella",sub='129Mbp; 7,067 contigs')
+levelplot(total_hits ~ log10(sample_DB_intensity)*log10(species_DB_intensity),data=in_silico[in_silico$TP_species=='A-halleri_01',], col.regions = heat.colors(100)[length(heat.colors(100)):1], main="A. halleri",sub='196Mbp; 2,239 contigs')
+levelplot(total_hits ~ log10(sample_DB_intensity)*log10(species_DB_intensity),data=in_silico[in_silico$TP_species=='A-lyrata_04',], col.regions = heat.colors(100)[length(heat.colors(100)):1], main="A. lyrata",sub='208Mbp; 3,645 contigs')
+levelplot(total_hits ~ log10(sample_DB_intensity)*log10(species_DB_intensity),data=in_silico[in_silico$TP_species=='C-bursa_05',], col.regions = heat.colors(100)[length(heat.colors(100)):1], main="C. bursa",sub='268Mbp; 8,186 contigs')
+levelplot(total_hits ~ log10(sample_DB_intensity)*log10(species_DB_intensity),data=in_silico[in_silico$TP_species=='C-sativa_06',], col.regions = heat.colors(100)[length(heat.colors(100)):1], main="C. sativa",sub='641Mbp; 37,780 contigs')
+```
+
+Okay, this is a little hard to interpret; now plot hit percentage (expectation) * total hits, e.g. number of expected positives:
+```{r}
+levelplot(total_hits * two_way_rate_with_cutoff ~ log10(sample_DB_intensity)*log10(species_DB_intensity),data=in_silico, col.regions = heat.colors(100)[length(heat.colors(100)):1], main="All species")
+levelplot(total_hits * two_way_rate_with_cutoff ~ log10(sample_DB_intensity)*log10(species_DB_intensity),data=in_silico[in_silico$TP_species=='A-thaliana_02',], col.regions = heat.colors(100)[length(heat.colors(100)):1], main="A. thaliana",sub='120Mbp; 7 contigs')
+levelplot(total_hits * two_way_rate_with_cutoff ~ log10(sample_DB_intensity)*log10(species_DB_intensity),data=in_silico[in_silico$TP_species=='C-rubella_03',], col.regions = heat.colors(100)[length(heat.colors(100)):1], main="C. rubella",sub='129Mbp; 7,067 contigs')
+levelplot(total_hits * two_way_rate_with_cutoff ~ log10(sample_DB_intensity)*log10(species_DB_intensity),data=in_silico[in_silico$TP_species=='A-halleri_01',], col.regions = heat.colors(100)[length(heat.colors(100)):1], main="A. halleri",sub='196Mbp; 2,239 contigs')
+levelplot(total_hits * two_way_rate_with_cutoff ~ log10(sample_DB_intensity)*log10(species_DB_intensity),data=in_silico[in_silico$TP_species=='A-lyrata_04',], col.regions = heat.colors(100)[length(heat.colors(100)):1], main="A. lyrata",sub='208Mbp; 3,645 contigs')
+levelplot(total_hits * two_way_rate_with_cutoff ~ log10(sample_DB_intensity)*log10(species_DB_intensity),data=in_silico[in_silico$TP_species=='C-bursa_05',], col.regions = heat.colors(100)[length(heat.colors(100)):1], main="C. bursa",sub='268Mbp; 8,186 contigs')
+levelplot(total_hits * two_way_rate_with_cutoff ~ log10(sample_DB_intensity)*log10(species_DB_intensity),data=in_silico[in_silico$TP_species=='C-sativa_06',], col.regions = heat.colors(100)[length(heat.colors(100)):1], main="C. sativa",sub='641Mbp; 37,780 contigs')
+```
+
+Formally analyse the relationship with a GLM:
+```{r}
+# 2-way with cutoff, by species too
+model_total_positives=glm(total_hits * two_way_rate_with_cutoff ~ (sample_DB_intensity)*(species_DB_intensity)*TP_species,data=in_silico)
+summary.glm(model_total_positives)
+summary(aov(model_total_positives))
+# two-way rate with cutoff, no species
+model_total_positives_nosp=glm(total_hits * two_way_rate_with_cutoff ~ (sample_DB_intensity)*(species_DB_intensity),data=in_silico)
+summary(aov(model_total_positives_nosp))
+summary(model_total_positives_nosp)
+# 2-way, by species too
+model_total_positives=glm(total_hits * two_way_rate ~ (sample_DB_intensity)*(species_DB_intensity)*TP_species,data=in_silico)
+summary(aov(model_total_positives))
+# two-way rate with cutoff, no species
+model_total_positives_nosp=glm(total_hits * two_way_rate ~ (sample_DB_intensity)*(species_DB_intensity),data=in_silico)
+summary(aov(model_total_positives_nosp))
+summary(model_total_positives_nosp)
+```
+And what we might really want to know is the expectation that a read in a sequencing run of length n will be a positive:
+```{r}
+levelplot((total_hits * two_way_rate)/sample_DB_intensity ~ log10(sample_DB_intensity)*log10(species_DB_intensity),data=in_silico, col.regions = heat.colors(100)[length(heat.colors(100)):1], main="All species: TP hit expectation")
+levelplot((total_hits * two_way_rate_with_cutoff)/sample_DB_intensity ~ log10(sample_DB_intensity)*log10(species_DB_intensity),data=in_silico, col.regions = heat.colors(100)[length(heat.colors(100)):1], main="All species: TP hit expectation with cutoff")
+levelplot(((total_hits * ((one_way_TP + two_way_TP)/(one_way_FP + two_way_FP+one_way_TP+two_way_TP)))/sample_DB_intensity) ~ log10(sample_DB_intensity)*log10(species_DB_intensity),data=in_silico, col.regions = heat.colors(100)[length(heat.colors(100)):1], main="All species: Accuracy expectation (TP:TP+FP)/total reads")
+levelplot((( ((one_way_TP + two_way_TP)/(one_way_FP + two_way_FP)))/sample_DB_intensity) ~ log10(sample_DB_intensity)*log10(species_DB_intensity),data=in_silico, col.regions = heat.colors(100)[length(heat.colors(100)):1], main="All species: Accuracy")
+levelplot((total_hits /sample_DB_intensity) ~ log10(sample_DB_intensity)*log10(species_DB_intensity),data=in_silico, col.regions = heat.colors(100)[length(heat.colors(100)):1], main="All species: total hit rate (all reads)")
+```
+
+Let's break down the expected number of good hits a bit more simply:
+```{r}
+par(mfrow=c(1,2))
+boxplot((( ((one_way_TP + two_way_TP)))/sample_DB_intensity) ~ log10(species_DB_intensity),data=in_silico, col.regions = heat.colors(100)[length(heat.colors(100)):1], main="All species",xlab='log10 reference DB size',ylab='true hits / total reads')
+boxplot((( ((one_way_TP + two_way_TP)))/sample_DB_intensity) ~ log10(sample_DB_intensity),data=in_silico, col.regions = heat.colors(100)[length(heat.colors(100)):1], main="All species",xlab='log10 total reads size',ylab='true hits / total reads')
+```
+
+As above but using two-way hit rate:
+```{r}
+par(mfrow=c(1,2))
+boxplot((total_hits * two_way_rate)/sample_DB_intensity ~ log10(species_DB_intensity),data=in_silico, col.regions = heat.colors(100)[length(heat.colors(100)):1], main="All species",xlab='log10 reference DB size',ylab='two-way expected hits / total reads')
+boxplot((total_hits * two_way_rate)/sample_DB_intensity ~ log10(sample_DB_intensity),data=in_silico, col.regions = heat.colors(100)[length(heat.colors(100)):1], main="All species",xlab='log10 total reads size',ylab='two-way expected hits / total reads')
+```
+
+As above but using two-way hit rate, with cutoff > 50:
+```{r}
+par(mfrow=c(1,2))
+boxplot((total_hits * two_way_rate_with_cutoff)/sample_DB_intensity ~ log10(species_DB_intensity),data=in_silico, col.regions = heat.colors(100)[length(heat.colors(100)):1], main="All species",xlab='log10 reference DB size',ylab='two-way expected hits (cutoff) / total reads')
+boxplot((total_hits * two_way_rate_with_cutoff)/sample_DB_intensity ~ log10(sample_DB_intensity),data=in_silico, col.regions = heat.colors(100)[length(heat.colors(100)):1], main="All species",xlab='log10 total reads size',ylab='two-way expected hits (with cutoff) / total reads')
+```
+
+As above but accuracy e.g. [(TP:TP+FP) / total reads]. This is probably closest to the headline 'effective ID rate', e.g. expectation that a given sequenced read produces a BLAST hit which is accurately a true positive.
+```{r}
+#par(mfrow=c(1,2))
+# TP rate in red
+boxplot(((total_hits * ((one_way_TP + two_way_TP)/(one_way_FP + two_way_FP+one_way_TP+two_way_TP)))/sample_DB_intensity) ~ log10(species_DB_intensity),data=in_silico, xlab='log10 reference DB size',ylab='Accuracy expectation (TP:TP+FP)/total reads',col=rgb(1,0,0,0.6))
+# FP rate in blue
+boxplot(((total_hits * ((one_way_FP + two_way_FP)/(one_way_FP + two_way_FP+one_way_TP+two_way_TP)))/sample_DB_intensity) ~ log10(sample_DB_intensity),data=in_silico, add=T,col=rgb(0,0,1,0.4))
+legend(1,0.9,'TP fraction',fill='pink')
+legend(1,0.7,'FP fraction',fill='light blue')
+```
+
+Of course we should ask the reciprocal question e.g. [(FP:TP+FP) / total reads], expectation that a given sequenced read produces a BLAST hit which is inaccurately a false positive.
+```{r}
+par(mfrow=c(1,2))
+boxplot(((total_hits * ((one_way_FP + two_way_FP)/(one_way_FP + two_way_FP+one_way_TP+two_way_TP)))/sample_DB_intensity) ~ log10(species_DB_intensity),data=in_silico, xlab='log10 reference DB size',ylab='Miss expectation (FP:TP+FP)/total reads')
+boxplot(((total_hits * ((one_way_FP + two_way_FP)/(one_way_FP + two_way_FP+one_way_TP+two_way_TP)))/sample_DB_intensity) ~ log10(sample_DB_intensity),data=in_silico, xlab='log10 total reads size')
+```
