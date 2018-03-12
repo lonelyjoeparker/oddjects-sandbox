@@ -1,9 +1,9 @@
 ---
 title: "In silico R4IDs simulation"
 output:
-  html_document: default
-  html_notebook: default
   pdf_document: default
+  html_notebook: default
+  html_document: default
 ---
 
 ## Aim: establish likely performance.
@@ -59,7 +59,15 @@ levelplot((one_way_TP + two_way_TP) / (one_way_FP + two_way_FP) ~ log10(sample_D
 levelplot((one_way_TP + two_way_TP) / (one_way_FP + two_way_FP) ~ log10(sample_DB_intensity)*log10(species_DB_intensity),data=in_silico[in_silico$TP_species=='C-sativa_06',], col.regions = heat.colors(100)[length(heat.colors(100)):1], main="C. sativa",sub='641Mbp; 37,780 contigs')
 ```
 
-Thirdly *mean_bias*
+Thirdly *mean_bias*; first what is the aggregate length bias we can expect (as in the sci fest GUI)?
+```{r}
+levelplot(two_way_rate*total_hits ~ log10(sample_DB_intensity)*log10(species_DB_intensity),data=in_silico, col.regions = heat.colors(100)[length(heat.colors(100)):1], main="Expected aggregate BLAST alignment bias",xlab='log10 sample reads resequenced', ylab='log10 training reads sequenced to build R4ID database')
+# boxplots by intensity to see confidence intervals
+par(mfrow=c(1,2))
+boxplot(log10(two_way_rate*total_hits) ~ log10(sample_DB_intensity),data=in_silico, main="Expected aggregate BLAST alignment bias",xlab='log10 sample reads resequenced', ylab='Expected aggregate BLAST alignment bias')
+boxplot(log10(two_way_rate*total_hits) ~ log10(species_DB_intensity),data=in_silico, main="Expected aggregate BLAST alignment bias",xlab='log10 R4ID sequencing effort', ylab='Expected aggregate BLAST alignment bias')
+```
+And the bias itself?
 ```{r}
 levelplot(log10(mean_bias) ~ log10(sample_DB_intensity)*log10(species_DB_intensity),data=in_silico, col.regions = heat.colors(100)[length(heat.colors(100)):1], main="All species")
 levelplot(mean_bias ~ log10(sample_DB_intensity)*log10(species_DB_intensity),data=in_silico[in_silico$TP_species=='A-thaliana_02',], col.regions = heat.colors(100)[length(heat.colors(100)):1], main="A. thaliana",sub='120Mbp; 7 contigs')
@@ -164,14 +172,18 @@ boxplot((total_hits * two_way_rate_with_cutoff)/sample_DB_intensity ~ log10(samp
 
 As above but accuracy e.g. [(TP:TP+FP) / total reads]. This is probably closest to the headline 'effective ID rate', e.g. expectation that a given sequenced read produces a BLAST hit which is accurately a true positive.
 ```{r}
-par(mfrow=c(1,2))
-boxplot(((total_hits * ((one_way_TP + two_way_TP)/(one_way_FP + two_way_FP+one_way_TP+two_way_TP)))/sample_DB_intensity) ~ log10(species_DB_intensity),data=in_silico, col.regions = heat.colors(100)[length(heat.colors(100)):1], main="All species",xlab='log10 reference DB size',ylab='Accuracy expectation (TP:TP+FP)/total reads')
-boxplot(((total_hits * ((one_way_TP + two_way_TP)/(one_way_FP + two_way_FP+one_way_TP+two_way_TP)))/sample_DB_intensity) ~ log10(sample_DB_intensity),data=in_silico, col.regions = heat.colors(100)[length(heat.colors(100)):1], main="All species",xlab='log10 total reads size',ylab='Accuracy expectation (TP:TP+FP)/total reads')
+#par(mfrow=c(1,2))
+# TP rate in red
+boxplot(((total_hits * ((one_way_TP + two_way_TP)/(one_way_FP + two_way_FP+one_way_TP+two_way_TP)))/sample_DB_intensity) ~ log10(species_DB_intensity),data=in_silico, xlab='log10 reference DB size',ylab='Accuracy expectation (TP:TP+FP)/total reads',col=rgb(1,0,0,0.6))
+# FP rate in blue
+boxplot(((total_hits * ((one_way_FP + two_way_FP)/(one_way_FP + two_way_FP+one_way_TP+two_way_TP)))/sample_DB_intensity) ~ log10(sample_DB_intensity),data=in_silico, add=T,col=rgb(0,0,1,0.4))
+legend(1,0.9,'TP fraction',fill='pink')
+legend(1,0.7,'FP fraction',fill='light blue')
 ```
 
 Of course we should ask the reciprocal question e.g. [(FP:TP+FP) / total reads], expectation that a given sequenced read produces a BLAST hit which is inaccurately a false positive.
 ```{r}
 par(mfrow=c(1,2))
-boxplot(((total_hits * ((one_way_FP + two_way_FP)/(one_way_FP + two_way_FP+one_way_TP+two_way_TP)))/sample_DB_intensity) ~ log10(species_DB_intensity),data=in_silico, col.regions = heat.colors(100)[length(heat.colors(100)):1], main="All species",xlab='log10 reference DB size',ylab='Miss expectation (FP:TP+FP)/total reads')
-boxplot(((total_hits * ((one_way_FP + two_way_FP)/(one_way_FP + two_way_FP+one_way_TP+two_way_TP)))/sample_DB_intensity) ~ log10(sample_DB_intensity),data=in_silico, col.regions = heat.colors(100)[length(heat.colors(100)):1], main="All species",xlab='log10 total reads size',ylab='Miss expectation (FP:TP+FP)/total reads')
+boxplot(((total_hits * ((one_way_FP + two_way_FP)/(one_way_FP + two_way_FP+one_way_TP+two_way_TP)))/sample_DB_intensity) ~ log10(species_DB_intensity),data=in_silico, xlab='log10 reference DB size',ylab='Miss expectation (FP:TP+FP)/total reads')
+boxplot(((total_hits * ((one_way_FP + two_way_FP)/(one_way_FP + two_way_FP+one_way_TP+two_way_TP)))/sample_DB_intensity) ~ log10(sample_DB_intensity),data=in_silico, xlab='log10 total reads size')
 ```

@@ -1,7 +1,7 @@
 ---
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
   variant: markdown+pipe_tables
 ---
 # Methods:
@@ -134,6 +134,11 @@ levelplot(mean_bias ~ log10(sample_DB_intensity)*log10(species_DB_intensity),dat
 levelplot(mean_bias ~ log10(sample_DB_intensity)*log10(species_DB_intensity),data=all_reps[all_reps$TP_species=='Silene-uniflora',], col.regions = heat.colors(100)[length(heat.colors(100)):1], main="Silene uniflora")
 levelplot(mean_bias ~ log10(sample_DB_intensity)*log10(species_DB_intensity),data=all_reps[all_reps$TP_species=='Sorbus-aria',], col.regions = heat.colors(100)[length(heat.colors(100)):1], main="Sorbus aria")
 levelplot(mean_bias ~ log10(sample_DB_intensity)*log10(species_DB_intensity),data=all_reps, col.regions = heat.colors(100)[length(heat.colors(100)):1], main="(all spp.)")
+```
+
+## Now mean bias times total hits, e.g. what we'd actually see in the GUI
+```{r}
+levelplot(two_way_rate*total_hits ~ log10(sample_DB_intensity)*log10(species_DB_intensity),data=all_reps, col.regions = heat.colors(100)[length(heat.colors(100)):1], main="Expected aggregate BLAST alignment bias",xlab='log10 sample reads resequenced', ylab='log10 training reads sequenced to build R4ID database')
 ```
 
 ## Now plot 2-way rate %:
