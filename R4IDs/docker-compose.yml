@@ -1,10 +1,10 @@
 version: '3'
 services:
   training:
-    build: ./training
-  test:
-    build: ./test
+    image: lonelyjoeparker/r4ids:r4ids-training-v0.1
+  resequencing:
+    image: lonelyjoeparker/r4ids:r4ids-resequencing-v0.1
   visualisation:
-    build: ./visualisation
+    image: lonelyjoeparker/r4ids:r4ids-resequencing-v0.1
     ports:
      - "80:80"
