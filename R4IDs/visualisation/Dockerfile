@@ -1,23 +1,26 @@
-# The 'server' container to display the results from
+# The 'visualisation' container to display the results from
 # the 'test' container as a web page.
-#
-# NCBI BLAST+ 2.2.30+ Dockerfile
-#
-# https://github.com/simonalpha/ncbi-blast-docker
-# https://github.com/simonalpha/ncbi-blast-docker/tree/master/ncbi-blast-2.2.30+
-#
-# Provide`s NCBI BLAST+ binaries, mainly for use with Galaxy Project dockerised runners
 
-FROM ubuntu:xenial
+# basic PHP + Apache 
+# (see https://docs.docker.com/samples/library/php/#create-a-dockerfile-in-your-php-project-1)
+FROM php:7.0-apache
+COPY config/php.ini /usr/local/etc/php/
+COPY src/ /var/www/html/
 
 MAINTAINER Joe Parker <joe@lonelyjoeparker.com>
 
-# Download & install BLAST
-RUN mkdir /opt/blast \
-      && apt-get update && apt-get install -y ncbi-blast+
+# Set the working directory to /var/www/html/
+WORKDIR /var/www/html/
 
-ENV PATH /opt/blast/bin:$PATH
+# Copy the current directory contents into the container at /var/www/html/
+ADD . /var/www/html/
+
+# Install any needed packages specified in requirements.txt
+#RUN pip install --trusted-host pypi.python.org -r requirements.txt
+
+# Make port 80 available to the world outside this container
+EXPOSE 80
 
 # set default behaviour
-WORKDIR /blast
-CMD ["bash"]
+# CMD ["bash"]
+# sci-fest.php should be the index
