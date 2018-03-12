@@ -1,0 +1,3 @@
+[submodule "R4IDs/real-time-phylogenomics"]
+	path = R4IDs/real-time-phylogenomics
+	url = https://github.com/lonelyjoeparker/real-time-phylogenomics
