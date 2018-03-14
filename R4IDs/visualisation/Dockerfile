@@ -1,28 +1,37 @@
 # The 'visualisation' container to display the results from
 # the 'test' container as a web page.
 
-# basic PHP + Apache 
-# (see https://docs.docker.com/samples/library/php/#create-a-dockerfile-in-your-php-project-1)
-
-FROM ubuntu:xenial
-FROM php:7.0-apache
+FROM busybox
+#FROM ubuntu:xenial
+#FROM php:7.0-apache
 #COPY config/php.ini /usr/local/etc/php/
-#COPY src/ /var/www/html/
+ADD src/ /www
+ADD src/css /www/css
+ADD src/js /www/js
+ADD src/Highcharts-4.2.3 /www/Highcharts-4.2.3
 
+# based on https://github.com/crccheck/docker-hello-world
 MAINTAINER Joe Parker <joe@lonelyjoeparker.com>
 
 # Set the working directory to /var/www/html/
-WORKDIR /var/www/html/
+#WORKDIR /var/www/html/
 
-# Copy the current directory contents into the container at /var/www/html/
-ADD . /var/www/html/
+
+# outputs
+#ADD index.html /www/index.html
+#ADD KSF.html /www/KSF.html
+#ADD hello.php /www/hello.php	#doesn't serve...
+
 
 # Install any needed packages specified in requirements.txt
 #RUN pip install --trusted-host pypi.python.org -r requirements.txt
 
 # Make port 80 available to the world outside this container
-EXPOSE 80
+EXPOSE 8000
 
 # set default behaviour
 # CMD ["bash"]
-# sci-fest.php should be the index
+# Create a basic webserver and sleep forever
+CMD httpd -p 80 -h /www; tail -f /dev/null
+
+
