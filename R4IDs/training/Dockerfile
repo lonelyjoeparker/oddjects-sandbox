@@ -35,3 +35,5 @@ ENV PATH /opt/blast/bin:$PATH
 ENTRYPOINT ["bash", "/app/setup_training_data.sh","foo"]
 # an extra arg
 CMD ["bar"]
+# run with e.g.
+# docker run -v ~/Public/test_r4ids_training_input/:/input -v ~/Public/test_r4ids_output/:/output raids-training

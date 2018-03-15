@@ -16,6 +16,12 @@ MAINTAINER Joe Parker <joe@lonelyjoeparker.com>
 # Set the working directory to /var/www/html/
 #WORKDIR /var/www/html/
 
+# Copy the current directory contents into the container at /www
+#ADD css /www/css
+#ADD js /www/js
+#ADD Highcharts-4.2.3 /www/Highcharts-4.2.3
+# data dir
+#ADD data /www/data
 
 # outputs
 #ADD index.html /www/index.html
@@ -33,5 +39,7 @@ EXPOSE 8000
 # CMD ["bash"]
 # Create a basic webserver and sleep forever
 CMD httpd -p 80 -h /www; tail -f /dev/null
-
+# run with e.g. 
+# docker run -p 80:80 r4ids-visualisation
+# output will be on http://localhost/KSF.html
 
