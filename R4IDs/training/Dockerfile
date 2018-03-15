@@ -19,6 +19,9 @@ WORKDIR /app
 # Copy the current directory contents into the container at /app
 ADD . /app
 
+VOLUME /input
+VOLUME /output
+
 # Install any needed packages specified in requirements.txt
 RUN pip install --trusted-host pypi.python.org -r requirements.txt
 
@@ -29,4 +32,6 @@ RUN mkdir /opt/blast \
 ENV PATH /opt/blast/bin:$PATH
 
 # set default behaviour
-CMD ["bash"]
+ENTRYPOINT ["bash", "/app/setup_training_data.sh","foo"]
+# an extra arg
+CMD ["bar"]
