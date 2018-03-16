@@ -103,6 +103,7 @@
 		<div class="container" style="margin-top:50px">
 			<!-- Example row of columns -->
 			<h1>Summary</h1>
+<!-- old test data 
 			<div class="row">
 				<pre style="text-size:larger">Last data: Sun 7 Aug 2016 14:11:22 BST
 
@@ -126,6 +127,7 @@ BLASTN hits:
 | lyrata: 3078 2779.0435 40 
 | thaliana: 13127 11154.8393 94 
 </pre>			</div>
+/old test data -->
 			<div class="row">
 				<div class="col-md-4">
 					<h2>Read rate (throughput)</h2>
@@ -158,8 +160,11 @@ BLASTN hits:
     <div class="container">
 		<h1>BLAST</h1>
 		<div class="row">
-			<div class="col-md-4"><h3>Summary table</h3><p>(DataTables render of blast hits)</p>
-<!-- DELETED AUG 05 2016 -->
+			<div class="col-md-4"><h3>Raw data table</h3></p>
+				<pre style="text-size:larger" id="rawdata"><pre>	
+				<script type=text/javascript>
+					$("#rawdata").load("data.tdf");
+				</script>
 			</div>
 		</div>
       </div>
@@ -434,12 +439,6 @@ $(function () {
 </script>
 <!-- end guages -->
 
-	Text data:
-	<pre style="text-size:larger" id="rawdata"><pre>
-	
-	<script type=text/javascript>
-		$("#rawdata").load("data.tdf");
-	</script>
 	<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <!--<script src="../../assets/js/ie10-viewport-bug-workaround.js"></script>-->
   </body>
