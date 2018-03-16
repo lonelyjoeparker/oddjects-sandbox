@@ -1,7 +1,13 @@
 # Raw-rapid-read-reference ID (R4ID) pipeline: Usage
 
-## Citation
+ 1) Citation
+ 2) Introduction
+ 3) Deployment
+ 4) Usage
+ 5) Help
 
+
+## Citation:
 Parker, J., Helmstetter, A. J. H., Papadopulos, A. (2018). Rapid, raw-read reference and identification (R4IDs): A flexible platform for rapid generic species ID using long-read sequencing technology. bioarXiv. https://www.biorxiv.org/content/early/2018/03/13/281048
 
 ![Screenshot of visualisation container UI](screenshot.png)
@@ -42,3 +48,11 @@ The training data should now be built as BLAST DBs. You can now set up your sequ
 `docker run -v <real-time BLAST analysis output dir / r4ids-visualisation www dir>:/www -p 80:80 r4ids-visualisation`
 
 Steps 2 & 3 (r4ids-resequencing, r4ids-visualisation) can and should run in parallel and need concurrent access to their shared <real-time BLAST analysis outout dir / r4ids-visualisation www> dir on the physical host (mounted at `/output_web` in resequencing container, and `/www` in visualisation container.
+
+## Help
+
+Please raise an [issue](https://github.com/lonelyjoeparker/oddjects-sandbox/issues) if something looks broken. 
+
+## Contact / maintainer
+
+@lonelyjoeparker
