@@ -28,6 +28,8 @@ MAINTAINER Joe Parker <joe@lonelyjoeparker.com>
 #ADD KSF.html /www/KSF.html
 #ADD hello.php /www/hello.php	#doesn't serve...
 
+# copy outputs from resequencing to web too
+VOLUME /output_web
 
 # Install any needed packages specified in requirements.txt
 #RUN pip install --trusted-host pypi.python.org -r requirements.txt
@@ -38,7 +40,7 @@ EXPOSE 8000
 # set default behaviour
 # CMD ["bash"]
 # Create a basic webserver and sleep forever
-CMD httpd -p 80 -h /www; tail -f /dev/null
+CMD ln -s /output_web/* /www; httpd -p 80 -h /www; tail -f /dev/null
 # run with e.g. 
 # docker run -p 80:80 r4ids-visualisation
 # output will be on http://localhost/KSF.html
