@@ -1,7 +1,7 @@
 ---
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
   variant: markdown+pipe_tables
 ---
 # Methods:
@@ -76,7 +76,9 @@ library(lattice)
 <!--Plot bias first: -->
 ```{r eval=FALSE}
 # read in the input for each labelling / subsampling size
-rep_01 = read.table('~/Documents/all_work/programming/oddjects-sandbox/R4IDs/collected_all_replicates.tdf',header=T,sep="\t")
+#rep_01 = read.table('~/Documents/all_work/programming/oddjects-sandbox/R4IDs/manuscript-analyses/collected_all_replicates.tdf',header=T,sep="\t")
+
+rep_01 = read.table('~/Documents/all_work/programming/oddjects-sandbox/R4IDs/manuscript-analyses/20190806-replicates.tdf',header=T,sep="\t")
 
 # cbind them all into a big table, adding the 'training_intensity' and 'query_intensity' cols
 
@@ -126,7 +128,13 @@ levelplot(two_way_rate_with_cutoff ~ log10(sample_DB_intensity)*log10(species_DB
 ## Now repeat it properly for all reps. Mean bias first:
 ```{r}
 # read in the input for each labelling / subsampling size
-all_reps = read.table('~/Documents/all_work/programming/oddjects-sandbox/R4IDs/manuscript-analyses/collected_really_all_replicates.tdf',header=T,sep="\t")
+
+# old data
+#all_reps = read.table('~/Documents/all_work/programming/oddjects-sandbox/R4IDs/manuscript-analyses/collected_really_all_replicates.tdf',header=T,sep="\t")
+
+# new 2019 (resimulated, more reps) data
+all_reps = read.table('~/Documents/all_work/programming/oddjects-sandbox/R4IDs/manuscript-analyses/20190806-replicates.tdf',header=T,sep="\t")
+
 # bias
 levelplot(mean_bias ~ log10(sample_DB_intensity)*log10(species_DB_intensity),data=all_reps[all_reps$TP_species=='Beta-patula',], col.regions = heat.colors(100)[length(heat.colors(100)):1], main="Beta patula")
 levelplot(mean_bias ~ log10(sample_DB_intensity)*log10(species_DB_intensity),data=all_reps[all_reps$TP_species=='Erycina-echinata',], col.regions = heat.colors(100)[length(heat.colors(100)):1], main="Erycina echinata")

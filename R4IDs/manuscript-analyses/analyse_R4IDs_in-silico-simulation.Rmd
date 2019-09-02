@@ -31,7 +31,11 @@ Camelina sativa | file:////Users/joeparker/Downloads/JFZQ01.1.fsa_nt.gz file:///
 
 ```{r}
 library(lattice)
-in_silico = read.table('~/Documents/all_work/programming/oddjects-sandbox/R4IDs/manuscript-analyses/in-silico.out.parsed.tdf',header=T,sep="\t")
+# old data
+#in_silico = read.table('~/Documents/all_work/programming/oddjects-sandbox/R4IDs/manuscript-analyses/in-silico.out.parsed.tdf',header=T,sep="\t")
+
+# new 2019 resimulated (more reps) data
+in_silico = read.table('~/Documents/all_work/programming/oddjects-sandbox/R4IDs/manuscript-analyses/20190806-replicates-in-silico.tdf',header=T,sep="\t")
 
 ```
 
