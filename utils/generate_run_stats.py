@@ -2,69 +2,76 @@
 #
 # Description:
 # 	Opens a .fastq file assumed to be an sequencing run output,
-#   and generates basic stats about the run to command-line
+#   and generates basic stats about the run to command-line.
+#
+#   !NOTE!  this assumes default PHRED Q-score encoding, e.g. as
+#           interpreted by the Bio.SeqIO.SeqRecord.letter_annotations["phred_quality"]
+#           attribute. See Biopython documentation for details.
 #
 # Author:
 #	@lonelyjoeparker / Joe Parker / NBIC / 2024
 #
 # Usage:
 #
-# 	generate_run_stats.py  --fastq <input fasta> --output <output tab-delimited file> [--trim <characters to retain from names]
+# 	generate_run_stats.py  --fastq <input fastq>
 #
 # Where args:
 #
-#	<fastq>:			FASTQ file to be appended
-#	<ouput data>:		output file
-#	<trim>:				Integer number of characters [1:10] to retain from start of names
+#	<fastq>:			FASTQ file to be summarised
 #
-# Sample FASTA input:
-'''
->7291732___KOG0002
-maahksfrikqklakklkqnrsvpqwvrlrtgntirynakrrhwrrtklkl
->At3g02190___KOG0002
--------mikkklgkkmrqnrpipnwirlrtdnkirynakrrhwrrtklgf
->SPCC663.04___KOG0002
-mpshksfrtkqklakaarqnrpipqwirlrtgntvhynmkrrhwrrtklni
->YJL189w___KOG0002
-maaqksfrikqkmakakkqnrplpqwirlrtnntirynakrrnwrrtkmni
->CE06883___KOG0002
-msalkksfikrklakkqkqnrpmpqwvrmktgntmkynakrrhwrrtklkl
->Hs4506647___KOG0002
-msshktfrikrflakkqkqnrpipqwirmktgnkirynskrrhwrrtklgl
-'''
-# Sample .tdf output:
-'''
-name    Sequencing yield	N50 kbp	Max length kbp	Q mean
-
-'''
+# Sample FASTQ input (utils/example.fastq):
+"""
+@e2bc60d4-8ef7-48dd-8746-2f73ca2e81c7 runid=64d8b65843b7ef1e5d999e141984e9208ff85734 sampleid=K12_ecDNA_barcode7-10 read=9774 ch=474 start_time=2022-07-11T19:39:53Z model_version_id=2021-09-13_dna_r9.4.1_minion_promethion_768_3e7e2979 barcode=barcode07
+CGGGCGAATACATAAGGACCGTAAACTTCTCACCGGCGACAGTCCTTTTGCAGCGAATGCGTTGGGTAAACTGGCGGCGCAGGAAATGCTA
++
+?:;;<67222332.'''*/899>@@@@A@@AA@>;;::;<:::<<>?D=>;+**++2334?>=43445A??>=888635?BA><6--,,--
+@c558b8ad-888d-4024-9099-767b64c2bce7 runid=64d8b65843b7ef1e5d999e141984e9208ff85734 sampleid=K12_ecDNA_barcode7-10 read=10558 ch=392 start_time=2022-07-11T19:39:18Z model_version_id=2021-09-13_dna_r9.4.1_minion_promethion_768_3e7e2979 barcode=barcode07
+CGGAATCAACGCCGAGGTCTGTTTGGGCCACGATATCAAGACCGAAGTCGCTGGCAGCGACGCCAGCTCACGCACTTTACCGACATTGCCGGTTGCGAGGACAGCTTTTTGCATAGGATACCTAATTAATTAACGCCGCGATTTCTGGCGGGATTTGTTGCGGATTAATGATTTTAATTTGTTTGTGGCAGCCAAGTTCGCCTTTTTCAATCACCACACGGCTTTTGGCAACCCGGAATTGCTTACCGAGAAACTTCACCAGATGACTGTTGGCCTGGCCGTCAACCGGCGGCGCGGTAATGGCGACTTTAACTTCGTCGCCATGCTCGCCGACAATAGAATCACGGCTGGCTTTCGGCTGAATATAGAGCCGTAAAACCAGACCAAAATCATCATTAACTGTTACGGCATTCATAACGCCATCCACAGCCCTGGCAGCAGCATATTTCCGGTTGCCTGTAATACTTCTGCGACACCCATATTGATGACATACAGCAGCAGAACGAGGATCATCGGCGAGAAATCAATCCCACCCATTGCCGGTAGACGTAACTTG
++
+41239;<<<<==>=>???BBEDDDD@=<;<<>>>///..53366566710..))))),,-4<>@@B<<;::;<;=>@?=====>433228:;=>>=6*)))*,)))),//23330/00236521668788:;<>FFD97ACCCECA@@?;;65560/29.-668:<=>FCBBBA)/245AGFFA42+)))(()*2235:45555;>4=DABCDCCBA(''''(?C:@?@>;;;)'377?C>>=<<<=<>8889:B@BFCD??>?=?@<;99))230044446?><;;99:.....?><;:::<<>>@?@AELHGNB@>><=>>>.***))(((*87788;;<<;>???@A?==>>B@>>>>?@A@@B@?@?>>>;55557::<<<+******+C>??>444448/..//66>>666:::;=AADF::==>>?+;?@44432544000))(**-:;;@>>>=22222==@>=:887789:@BBAB;<<<<CB@AABC;::::@@=1*)))*@@AG:::9:@@@CAFDHEGA;9;;;666100)&%%%&&&'1,,+&$
+@436dd009-59af-42a3-b22f-faad5df16dce runid=64d8b65843b7ef1e5d999e141984e9208ff85734 sampleid=K12_ecDNA_barcode7-10 read=7878 ch=464 start_time=2022-07-11T19:39:08Z model_version_id=2021-09-13_dna_r9.4.1_minion_promethion_768_3e7e2979 barcode=barcode07
+AATTGGGGATGCAGTCGATCCGGCGCAGACAACTGATCGACGCCACACTGGAAGCAATGAAGTGGGCATGCACGATGCAACGATCGCGCAGATCGCCCGCCGTGCAGGCGTTCTACGGGGATCATCAGCCACTATTTCAGGGACAAAAATGGTCTGGAAGCAACCATGCGCGATATCCTGATCAGCTGCGTGACGCGGTTTTGAATCGATTACATGCACTTCCGCAGGGCAGTGCAGAGCAGCGATTACAGGCGATTGTTGGCGGAAACTTCGATGAAACGCAGGTGAGCAGTGCGGCGATGAAGCTTTGGCTGGCGTTCTGGGCCAGCAGTATGCATCAGCCGATGCTCTATCGTTTACAGCAGGTCAGCAGCCGCCGCGCTGTCGAATCTGGTGAGCGAGTTTCGTCGCGAACCT
++
+7789:<=?@@<<;99<;:<==@<;:;++++,****+;><>=<=<<;;==??BBEC=876457;<87878=><???@>==22222?;<;?656556AABCEED?>>778723321,+('&&'(*//2119965667@DC///00:;<<:877441/.**,57>=:;/.,-./0::<?=,**,,,,*---.<?CBACC><<<<>>43335@ADEIGCCDA@BBBB44444@@00000;=999323114434/..22?BAD??1001088=:@C=====DDHA@?322223<:..../44444A=71)()'%$&'(699::?@EGB@;;;//...00@@ABCDDD@?@@@CD@A@@@<;;;:>A@ADABBCDCC@<<==>EB@*))+..03<?AA41113433239>A@@??761//)$#
+@85f8ae4e-64ae-440e-99a4-c1bc90e3c884 runid=64d8b65843b7ef1e5d999e141984e9208ff85734 sampleid=K12_ecDNA_barcode7-10 read=10234 ch=475 start_time=2022-07-11T19:40:15Z model_version_id=2021-09-13_dna_r9.4.1_minion_promethion_768_3e7e2979 barcode=barcode07
+CAAAAGCATATTCTTGAGGATAGAAATATTCTATCGTAACAAACCCGATACTTATTATTAAATTTAATAATGGTTAGATGTGCAAAAATTATTATGCAAAAAAACAGGATAAGGAATTCCAGATAATTGGGATAAACTTAACAATAAAAGAACCTTATTTATTATCTCGTAGAACGATGGCATCAAAAAAATCATCTATAAAGAAAGAGTGAAAGCGACGACAGTTTGTTCCTGCAGGCTGGGTAGCTCCAGCCTGCTCACCGATACATCACCGCAGCAAACGCCTTTGCCACACGTTGTACGTTGCCGTATTTAACCCGGCGACACACATACGACCATGGCGATGAGATAGACGCAAATTCTTCACGTAGTCGGTCAACCTGAGCGGCATAAACCGGTATGGGCGTACCGCGCTGATTAAAGCAGATAATCGAAATTGCGTTCTGGCATCTCATGTATACCTTCCGCAATTCCTGACGTGCCAGAATGCGAGTACGCATCTCTTCTACTTCCGCCAGCCAGCTGGCTTTAATCTTACTCGTCATTCCAGCACTGCAGCGCACCAGATTCGGCGGGCTGGAGTAGTTGCGGCGAACTGTTGCTTTCAGTGCCCCATTGCGGCCAGCGGCTTCAACATCTTCACCTGGCTGAAAGTCGCCGGCCTTCTCGCCGTAAGGGAGAAAATTTTCGAGAGCAATTATACAGAGCGGGTATTCGGCACTGGCAATGGCGCGAATAGCGTAGGCATCCTCTTCCATACCGGCACCAAATCCTTGATAGGCAATATCGAGGAATGGAATAAGCTCGCGGGCTTTGAGAATTTCAATCACCGCATCCCACTGATCATTAGTGAGATCGGCACCCGTTGGGTTGTGGCAGCATGGATGCAGCAACACAATACTGCGGGCAGGTAATGTTTTCAGCGTCGCCAACAGGTCATTAAAGCGCACGCCGTTAGTCGCTTCGTCATACGGTACTCGCCGAATCCAGCCCCGGCGAATATTGCTACGTGGTTTTCCCAGGTAGGATCGCTGACCCAGACGCCTGATTCGGGAAGTAGCGTTTCGAAATCCGCGCTTTCAATGCCCCGGAGCCGCCAAGTTTGAATGGTTGCTACGCGCTGTTGTTTCAGTACCGGATGGTCCGCACCAAACAGCAGCGGCGCAATGGCATGGCGATAGCAGTTAAGCCCTTCCATCGGTAAATAAAGCGAGCGCCATGTAAGAATGCGCATTCAGGCGCGCTTCCGCCTCCGCCACGGCTTGCAGTTGTGGGCCATTCCGTCTTCGTTGTGGTACAGACCGATGCCAAATTCCACTTTGTCGCTGCGGTCTTTTAAAACGCTCCATAAGCGTAAGAATCGGTCGCCAGCGTGAGCGTCAACTTTTTGAAACACGCGATGGTTCTCGGGTTTACGGGCAGGTGGTTAAAACACAATAAACCGGAAGAAGGCGAAGATCAGTGGATGTTCAGGAGCGAACGGCAATTAGCAACAGAGTGAGACTCATGACAAACGTACATCCGCCAGAGCACGACCTTTATAAAACGTGAAAGAACATCAACTTATTGAATTTTTAGGATTTTATTGGCCGGATGACATTCACGCCGCATCCGGCACAGATAATCAAATATTACAGAACGATTAATCCACGTATTTCATCGCGACCCTTGAAGTCGAGCGCGTAATAAGGTTCGTAAGCGCTTGCTTTCATCATTCAGTACGTTCTACGAATGACAACATAAAATGACCGGATCGCTTTGTCCTGCGCCTGTGGACCTAAGTCTACGCAGATCATATCCATCGCCACGCGCCCGACAATCGGTACTTCGCGACCGTTCACCAGCACTGGCGTACCGGACGGCGCGGCGCACT
++
+/3476789@ABA@@AA980//.+++,.>DJ=<;;;555110//,-)&'&&%&.*+++,5522122014657;;;<<;<<<<8421%$$$&&&(44((''(7C@83(&&''8;,'&&'0='''(?B*))(()01=2((&&'-.188:8758.+()&%$$$$$%%%%'54((+<=>><>??@@DCCBCCDIIDEGGFCCBCCFA:>>637><<;:;;;=??@@?777762**)''''5..412&&$$#$$&(*,.::?<61,,('''(+,0155755/0000=<:=<::BBCDBB..1=>.*'&&&&')799,,++*+,+&&'.,,.//33::)((((:0/*****-001698888****),-//457866677;756:511000*)/65740/))***+40.-+''$$%')..;>BE=<8...-.--234<A@765786657;>D;,,,,-67,***)*/++)))*'%%%&(*.*++...0)*(().@@@>66668;A?:::::>BA?;/../0<=DC@?;.-,,+/0/00+*****(&&&(-8<<=?+***FCBAA633/---+,'''')35844444>?:;::9??=>???*)))))8C989889,)(((.43,++&%%%&(((1,++**)'%%%%&()/,,'&&&%#####$$#$$%%#$&&&&&&(*=<=:6*)6(-665999C>?=10,*,,++/'&%%$$$''('&'(--)''&%&&''+*((%%%,-9-,,,-667=0..(((''')=BCCB55544;;;<==@??>=>BCDA>>===?@AB4...''0A<<<=>D*****>;;:::==97/(''---./26&&&;;::;@;22223CA*))%%'''1@?B8,,&%%%#$&%%4456<:888((((*66@AB6555+++++AA???>>@:''''345?AAABC38<;;=<=<<>>66665;;98999DCDD?9999:AFD-,,,,4444>>>=<,,'&&&&.203+++-=@@:8<<<977778;<=>>=;:666600-0/(-?:89=;9<;;<?:99999A>?@EDB@@44DBFG0(('())/0012?++((((),0-/(''*.;777;;;:8;=>>A?887*&%%%&+85G>=:9&&&&&+@;;<B@?BCCLJDA@@@>>>?>:9989:;;<<>??D111)(++,223DDB88899C?>>>?>>=::;;7?55::22313;=11123GFIJD55110013@10/--.+++0+++++<<=?DAAAB:=2111017955'':>>>>?@?9965572210'%$##%%%../1/7=??73-(###%%%&&&&())()**+33***,<=?A@877750-+)*)()-0223??>><<=<6--011)((,//+,++599<;?<8+*****=322:::/.06?BC<<;>?AA@>>>>55&&''(9;?>=====<<<==DDAB@?@@?@@ACFDC?>@ABB>=;99<<;;:7+)(((+'&&&'(((,+.017>A@???AA><<<<>>=<<;;><<<==?@EEDEE99877::<@E:9;:)((%%&)48>??>===?;*/.--./34:?@AEED>>===DCDDEDEGH79@??@@AAFIGFD@><<<=+)))))3**''((*>BCFPCIBB776)((()46709989943339?????BBB?>>=>?BCEFEHE99888<6588<<=@>0.../.<>?BBD:('''(>>?''')<==,,,,,>---('&&%%%&&(+-/-((%$$$$$$####&,-/8:<;;<=>>)'(-72@@>=<<:::///////::<ACDEFCC>====BC?????FBBCFE>.....02.-25789E11112ABB??@BCBBAADE@@???DB?>>>?@?>>>>?>===9:743-+%$#
+"""
 # Output / details:
 #	Will read input KOG data, and fasta file, remove reads that appear in filter,
-#	and write amended .fasta to output
+#	and write summary statistics to screen:
+#
+# Filename  num_sequences   Sequencing_yield    N50	Max_length  mean_sequence_Q-score
+
+# import needed packages
 from Bio import SeqIO
-import argparse
+import argparse, numpy as np, numpy.random as rand
 
 # parse input args
 parser = argparse.ArgumentParser(description='Converts a fasta file to phylip format. Note: assumes input is aligned already...')
 parser.add_argument('--fastq',	help='FASTQ file to be appended')
-parser.add_argument('--output',	help='output .tdf tab delimited data file')
-parser.add_argument('--trim',	help='characters to retain from name (start at left)', type=int, choices=range(1,11))
 args = parser.parse_args()
 
 # init global variables
 aln = []
 num_reads = 0
-lengths = []
-qscores = []
+lengths = np.array([])
+qscores = np.array([])
 
 # read alignment
 
 for seq in SeqIO.parse(args.fastq,'fastq'):
-	#if args.trim > 1:
-	#	seq.id = seq.id[args.trim:]
-	#aln.append(seq)
-    num_reads += 1
-    print(len(seq))
 
-print(num_reads)
-# At this point write out
-#SeqIO.write(aln,args.output,'fasta')
+    num_reads += 1
+    # put sequence length in array for mean and total calcs
+    seq_len = len(seq)
+    lengths = np.append(lengths,seq_len)
+    # get mean qscore for this sequence
+    seq_mean_qscore = np.mean(np.array(seq.letter_annotations["phred_quality"]))
+    qscores = np.append(qscores,seq_mean_qscore)
+
+
+# At this point write out tab-delimited data:
+# Filename  num_sequences   Sequencing_yield    N50	Max_length  mean_sequence_Q-score
+print("%s\t%d\t%d\t%f\t%d\t%f" % (args.fastq,num_reads,lengths.sum(),lengths.mean(),lengths.max(),qscores.sum()))
