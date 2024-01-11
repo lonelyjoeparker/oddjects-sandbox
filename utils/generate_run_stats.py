@@ -74,4 +74,4 @@ for seq in SeqIO.parse(args.fastq,'fastq'):
 
 # At this point write out tab-delimited data:
 # Filename  num_sequences   Sequencing_yield    N50	Max_length  mean_sequence_Q-score
-print("%s\t%d\t%d\t%f\t%d\t%f" % (args.fastq,num_reads,lengths.sum(),lengths.mean(),lengths.max(),qscores.sum()))
+print("%s\t%d\t%d\t%f\t%d\t%f" % (args.fastq,num_reads,lengths.sum(),lengths.mean(),lengths.max(),qscores.mean()))
