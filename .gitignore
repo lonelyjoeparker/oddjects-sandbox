@@ -18,3 +18,10 @@
 *.tex
 *.tsv
 *.txt
+*.tmp
+*.gz
+*.filtered
+*.sf
+*.unaligned
+*.coords
+*.coords_tmp
