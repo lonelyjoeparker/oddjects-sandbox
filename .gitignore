@@ -1,0 +1,11 @@
+*.png
+*.pdf
+*.html
+*.fasta
+*.fastq
+*.fna
+*.gff
+*.gtf
+*.gbk
+*.fai
+*.csv

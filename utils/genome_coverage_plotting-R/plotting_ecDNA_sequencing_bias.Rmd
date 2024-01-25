@@ -1,0 +1,69 @@
+---
+title: "Final ecDNA coverage plots analysis"
+author: "Joe Parker"
+date: "11/05/2023"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Read in data
+
+Read in data
+
+```{r, echo=FALSE}
+# read in and name dataset 1
+MPA01_guppy_D13 = read.table("/media/joe/PI-CLUSTER-/ecDNA_summer_2019/guppy-d13-ecDNA-realign/all_PA01-day13-ecDNA.sorted.bam.coverage.tdf",header=F,sep="\t")
+names(MPA01_guppy_D13) = c('contig','pos','MPA01_guppy_D13')
+
+# read in and name dataset 2
+MPA01_bwa_D3 = read.table("/media/joe/PI-CLUSTER-/ecDNA_summer_2019/bwa_align/bwa_PA01-3day.coverage.tdf",header=F,sep="\t")
+names(MPA01_bwa_D3) = c('contig','pos','MPA01_bwa_D3')
+# quick filter on contig as there's two in this file and we don't want the RGP42 one
+MPA01_bwa_D3.filter = MPA01_bwa_D3[MPA01_bwa_D3$contig=="NC_002516.2",]
+
+# .... N
+
+source(file="plotting_collate_data.R")
+dataset_collated = bias_collate(MPA01_guppy_D13, MPA01_bwa_D3.filter)
+```
+
+## Downsample data
+
+We don't need ~6.3M x-axis (genome position) plots per sample, so downsample them
+
+```{r, echo=FALSE}
+source(file="plotting_downsample.R")
+downsample_factor = 1000
+dataset_downsampled = bias_downsample(dataset_collated, downsample_factor)
+```
+
+## Plot smoothed lines
+
+First of all plot zoomed out, full-genome with base R graphics.
+
+```{r, echo=FALSE}
+start = 000000
+length = 6200000
+source(file="plotting_ggplot_plots.R")
+bias_plot(dataset_downsampled, start, length)
+```
+Now plot zoomed-in one (also with base R graphics)
+
+```{r, echo=FALSE}
+start = 5000000
+length = 500000
+bias_plot(dataset_downsampled, start, length)
+```
+
+Now use the ggplot2 method:
+
+```{r, echo=TRUE}
+start = 000000
+length = 6200000
+source(file="plotting_ggplot_plots.R")
+bias_ggplot(dataset_downsampled, start, length)
+```
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
