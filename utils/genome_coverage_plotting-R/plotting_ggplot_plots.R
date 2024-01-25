@@ -73,3 +73,14 @@ bias_ggplot = function(input, start_coordinates, window_length, which_columns){
   # now try to save the active plot
   ggsave('~/Downloads/ggplotTestSave.png')
 }
+
+bias_ggplot_simple = function(input, image_filename){
+  # input = data frame of coverage data
+  # image_filename = name of image to save to
+    
+  # now try a ggplot with the data
+  ggplot(input, aes(x=pos, y=input[,3])) + geom_point() + geom_smooth() + ggtitle(paste("Genome coverage:\n", image_filename)) + xlab("Genome position") + ylab("Read depth")
+  
+  # now try to save the active plot
+  ggsave(image_filename,width = 10,height = 4)
+}
