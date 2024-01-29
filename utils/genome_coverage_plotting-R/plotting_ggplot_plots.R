@@ -39,11 +39,12 @@ bias_plot = function(input, start_coordinates, window_length, which_columns){
   # return(output)
 }
 
-bias_ggplot = function(input, start_coordinates, window_length, which_columns){
+bias_ggplot = function(input, start_coordinates, window_length, which_columns, supress_save=F){
   # input = data frame of coverage data
   # start_coordinates  = position to start plot at (x pos)
   # window_length = overall plotting window length (x pos)
   # which_columns = which of the coverage data columns to plot
+  # no save = suppress .png save behaviour? Default=F
   # NB if start + length > input size, error.
   
   # housekeeping: check the window we've been asked for isn't too big:
@@ -70,17 +71,26 @@ bias_ggplot = function(input, start_coordinates, window_length, which_columns){
   # now try one with the other data, work out how to add the layers properly in ggplot later
   # ggplot(input, aes(x=pos, y=input[,3])) + geom_point() + geom_smooth() # this also works but it doesn't look as cool and overwrites the other plot
   
-  # now try to save the active plot
-  ggsave('~/Downloads/ggplotTestSave.png')
+  if (supress_save == F){
+    # now try to save the active plot
+    ggsave('~/Downloads/ggplotTestSave.png')
+  } else {
+    warning('Suppressing plot save - nothing written to disc.')
+  }
 }
 
-bias_ggplot_simple = function(input, image_filename){
+bias_ggplot_simple = function(input, image_filename, supress_save=F){
   # input = data frame of coverage data
   # image_filename = name of image to save to
+  # supress_save = suppress .png file output? Default: F
     
   # now try a ggplot with the data
   ggplot(input, aes(x=pos, y=input[,3])) + geom_point() + geom_smooth() + ggtitle(paste("Genome coverage:\n", image_filename)) + xlab("Genome position") + ylab("Read depth")
   
-  # now try to save the active plot
-  ggsave(image_filename,width = 10,height = 4)
+  if (supress_save==F){
+    # now try to save the active plot
+    ggsave(image_filename,width = 10,height = 4)
+  } else {
+    warning('Suppressing plot save - nothing written to disc.')
+  }
 }

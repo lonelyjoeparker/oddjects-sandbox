@@ -66,4 +66,212 @@ length = 6200000
 source(file="plotting_ggplot_plots.R")
 bias_ggplot(dataset_downsampled, start, length)
 ```
+
+As above, but suppress plot's save to disc:
+
+```{r, echo=TRUE}
+start = 000000
+length = 6200000
+source(file="plotting_ggplot_plots.R")
+bias_ggplot(dataset_downsampled, start, length, supress_save = T)
+bias_ggplot_simple(dataset_downsampled,'~/Downloads/ggplotSimple.png', supress_save = T)
+```
+
+Test this can be toggled on again:
+```{r, echo=TRUE}
+start = 000000
+length = 6200000
+source(file="plotting_ggplot_plots.R")
+bias_ggplot(dataset_downsampled, start, length, supress_save = F)
+bias_ggplot_simple(dataset_downsampled,'~/Downloads/ggplotSimple.png', supress_save = F)
+```
+
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+## Producing multi-dataset plots with ggplot2
+
+Want to combine the following MPA01 files:
+
+| Date | Method | Age | Extraction | filename |
+| --- | --- | --- | --- | --- |
+| 2019-09-17 | Planktonic | t=0 | protK | MPA01_planktonic_d0_proteinase_20190917.fastq |
+| 2019-06-18 | Biofilm | t=3 | protK | MPA01_ecDNA_d03_proteinase_20190618-allReplicates.fastq |
+| 2021-11-19 | Biofilm | t=3 | protK | MPA01_ecDNA_d03_proteinase_20211119-allReplicates.fastq |
+| 2019-07-11 | Biofilm | t=13 | protK | MPA01_ecDNA_d13_proteinase_20190711-allReplicates.fastq |
+| 2021-04-10 | Biofilm | t=13 | protK | MPA01_ecDNA_d13_proteinase_20210410-allReplicates.fastq |
+| 2022-09-15 | Biofilm | t=13 | cellulase | MPA01_ecDNA_d13_cellulase_20220915-allReplicates.fastq |
+| 2023-03-14 | Biofilm | t=13 | amylase | MPA01_ecDNA_d13_amylase_20230314-partialRepair.fastq | 
+ 
+```{r, echo=TRUE}
+# basic ggplot for coverae
+input = dataset_downsampled
+image_filename = '~/Downloads/ggplotSimple.png'
+ggplot(input, aes(x=pos, y=input[,3])) + geom_point() + geom_smooth() + ggtitle(paste("Genome coverage:\n", image_filename)) + xlab("Genome position") + ylab("Read depth")
+```
+ 
+Now read in all data, merge to one frame, plot together (may need to plot log(coverage) on Y-axis as range is from ~ 6 to ~5000)
+```{r, echo=T}
+# files
+#MPA01_planktonic_d0_proteinase_20190917.fastq
+#MPA01_ecDNA_d03_proteinase_20190618-allReplicates.fastq
+#MPA01_ecDNA_d03_proteinase_20211119-allReplicates.fastq
+#MPA01_ecDNA_d13_proteinase_20190711-allReplicates.fastq
+#MPA01_ecDNA_d13_proteinase_20210410-allReplicates.fastq
+#MPA01_ecDNA_d13_cellulase_20220915-allReplicates.fastq
+#MPA01_ecDNA_d13_amylase_20230314-partialRepair.fastq
+pk_d0_protK = read.table('/home/joe/Documents/all_work/NBIC/projects/ecDNA/20240125_raw_mapping_data/mapped_guppy_to_MPA01/MPA01_planktonic_d0_proteinase_20190917.sam.sorted.bam.depth.tdf',header=F,sep='\t')
+ecDNA_d03_protK_2019 = read.table('/home/joe/Documents/all_work/NBIC/projects/ecDNA/20240125_raw_mapping_data/mapped_guppy_to_MPA01/MPA01_ecDNA_d03_proteinase_20190618-allReplicates.sam.sorted.bam.depth.tdf',header=F,sep='\t')
+ecDNA_d03_protK_2021 = read.table('/home/joe/Documents/all_work/NBIC/projects/ecDNA/20240125_raw_mapping_data/mapped_guppy_to_MPA01/MPA01_ecDNA_d03_proteinase_20211119-allReplicates.sam.sorted.bam.depth.tdf',header=F,sep='\t')
+ecDNA_d13_amylase = read.table('/home/joe/Documents/all_work/NBIC/projects/ecDNA/20240125_raw_mapping_data/mapped_guppy_to_MPA01/MPA01_ecDNA_d13_amylase_20230314-partialRepair.sam.sorted.bam.depth.tdf',header=F,sep='\t')
+ecDNA_d13_cellulase = read.table('/home/joe/Documents/all_work/NBIC/projects/ecDNA/20240125_raw_mapping_data/mapped_guppy_to_MPA01/MPA01_ecDNA_d13_cellulase_20220915-allReplicates.sam.sorted.bam.depth.tdf',header=F,sep='\t')
+ecDNA_d13_protK_2019 = read.table('/home/joe/Documents/all_work/NBIC/projects/ecDNA/20240125_raw_mapping_data/mapped_guppy_to_MPA01/MPA01_ecDNA_d13_proteinase_20190711-allReplicates.sam.sorted.bam.depth.tdf',header=F,sep='\t')
+ecDNA_d13_protK_2021 = read.table('/home/joe/Documents/all_work/NBIC/projects/ecDNA/20240125_raw_mapping_data/mapped_guppy_to_MPA01/MPA01_ecDNA_d13_proteinase_20210410-allReplicates.sam.sorted.bam.depth.tdf',header=F,sep='\t')
+
+# rename the columns
+names(pk_d0_protK) = c('contig','pos','pk_d0_protK')
+names(ecDNA_d03_protK_2019) = c('contig','pos','ecDNA_d03_protK_2019')
+names(ecDNA_d03_protK_2021) = c('contig','pos','ecDNA_d03_protK_2021')
+names(ecDNA_d13_amylase) = c('contig','pos','ecDNA_d13_amylase')
+names(ecDNA_d13_cellulase) = c('contig','pos','ecDNA_d13_cellulase')
+names(ecDNA_d13_protK_2019) = c('contig','pos','ecDNA_d13_protK_2019')
+names(ecDNA_d13_protK_2021) = c('contig','pos','ecDNA_d13_protK_2021')
+
+
+# quickly check they're all the same length (number of genome positions in the map - otherwise they may have been mapped to different genomes, and this won't work...)
+length(ecDNA_d03_protK_2019[,1])
+length(ecDNA_d03_protK_2021[,1])
+length(ecDNA_d13_amylase[,1])
+length(ecDNA_d13_cellulase[,1])
+length(ecDNA_d13_protK_2019[,1])
+length(ecDNA_d13_protK_2021[,1])
+
+# all 6,275,467 bp long. Now need to downsample these every 1000bp. 
+# NOTE that the downsampling just throws the other 999 points out in each 1,000bp window. It is not an averaging method, for speed.
+```
+
+## TIDYVERSE STUFF
+
+```{r, echo=F}
+# now use tidyverse to simplify combining these datasets:
+library(dplyr)
+library(tidyr)
+
+# first try on a subset of data. subset and convert to tibble:
+# define which subset
+# window for locus 1
+l1_start=4701080
+l1_end  =4745720
+# window for locus 2
+l2_start=5211470
+l2_end  =5273825
+# ggplot settings
+global_alpha = 0.25
+global_loess_span = 0.15
+
+# locus 1 first
+start=l1_start
+end=l1_end
+partial_pk=as_tibble(pk_d0_protK[start:end,])
+partial_ec1=as_tibble(ecDNA_d03_protK_2019[start:end,])
+partial_ec2=as_tibble(ecDNA_d03_protK_2021[start:end,])
+partial_ec3=as_tibble(ecDNA_d13_protK_2019[start:end,])
+partial_ec4=as_tibble(ecDNA_d13_protK_2021[start:end,])
+partial_ec5=as_tibble(ecDNA_d13_amylase[start:end,])
+partial_ec6=as_tibble(ecDNA_d13_cellulase[start:end,])
+
+# inner join tables, e.g. retain matching columns:
+new_combined_test=inner_join(partial_ec1,partial_pk)
+new_combined_test=inner_join(new_combined_test,partial_ec2)
+new_combined_test=inner_join(new_combined_test,partial_ec3)
+new_combined_test=inner_join(new_combined_test,partial_ec4)
+new_combined_test=inner_join(new_combined_test,partial_ec5)
+new_combined_test=inner_join(new_combined_test,partial_ec6)
+
+# gather the columns so the original dataset becomes a factor, coverage a common variable. We need to do this so that we can use ggplot's factors-to-colour-class behaviour easily
+reshaped_cov_data=gather(new_combined_test,key='Dataset',value='coverage',3:9)
+
+# finally ggplot
+#ggplot(reshaped_cov_data, aes(x=pos, y=log(coverage), colour = dataset)) + geom_point() + geom_smooth() + ggtitle(paste("Genome coverage:\n", #image_filename)) + xlab("Genome position") + ylab("Read depth")
+
+## now try to downsample
+downsample_test = sample_frac(reshaped_cov_data,0.01,replace=T)
+
+# plot linear, then save
+ggplot(downsample_test, aes(x=pos, y=(coverage), colour = Dataset)) + geom_point(alpha=global_alpha) + geom_smooth(span=global_loess_span) + ggtitle(paste("Genome coverage (downsampled randomly):\nMPA01 locus 1")) + xlab("Genome position") + ylab("Read depth")
+ggsave('/home/joe/Documents/all_work/NBIC/projects/ecDNA/20240125_completed_coverage_plots/combined_MPA01_locus1_lin.png',width = 10,height = 4)
+
+# plot log, then save
+ggplot(downsample_test, aes(x=pos, y=log(coverage), colour = Dataset)) + geom_point(alpha=global_alpha) + geom_smooth(span=global_loess_span) + ggtitle(paste("Genome coverage (downsampled randomly):\nMP01 locus 1")) + xlab("Genome position") + ylab("log (Read depth)")
+ggsave('/home/joe/Documents/all_work/NBIC/projects/ecDNA/20240125_completed_coverage_plots/combined_MPA01_locus1_log.png',width = 10,height = 4)
+
+## NOW for locus 2
+start=l2_start
+end=l2_end
+partial_pk=as_tibble(pk_d0_protK[start:end,])
+partial_ec1=as_tibble(ecDNA_d03_protK_2019[start:end,])
+partial_ec2=as_tibble(ecDNA_d03_protK_2021[start:end,])
+partial_ec3=as_tibble(ecDNA_d13_protK_2019[start:end,])
+partial_ec4=as_tibble(ecDNA_d13_protK_2021[start:end,])
+partial_ec5=as_tibble(ecDNA_d13_amylase[start:end,])
+partial_ec6=as_tibble(ecDNA_d13_cellulase[start:end,])
+
+# inner join tables, e.g. retain matching columns:
+new_combined_test=inner_join(partial_ec1,partial_pk)
+new_combined_test=inner_join(new_combined_test,partial_ec2)
+new_combined_test=inner_join(new_combined_test,partial_ec3)
+new_combined_test=inner_join(new_combined_test,partial_ec4)
+new_combined_test=inner_join(new_combined_test,partial_ec5)
+new_combined_test=inner_join(new_combined_test,partial_ec6)
+
+# gather the columns so the original dataset becomes a factor, coverage a common variable. We need to do this so that we can use ggplot's factors-to-colour-class behaviour easily
+reshaped_cov_data=gather(new_combined_test,key='Dataset',value='coverage',3:9)
+
+# finally ggplot
+#ggplot(reshaped_cov_data, aes(x=pos, y=log(coverage), colour = dataset)) + geom_point() + geom_smooth() + ggtitle(paste("Genome coverage:\n", #image_filename)) + xlab("Genome position") + ylab("Read depth")
+
+## now try to downsample
+downsample_test = sample_frac(reshaped_cov_data,0.01,replace=T)
+
+# plot linear, then save
+ggplot(downsample_test, aes(x=pos, y=(coverage), colour = Dataset)) + geom_point(alpha=global_alpha) + geom_smooth(span=global_loess_span) + ggtitle(paste("Genome coverage (downsampled randomly):\nMPA01 locus 2")) + xlab("Genome position") + ylab("Read depth")
+ggsave('/home/joe/Documents/all_work/NBIC/projects/ecDNA/20240125_completed_coverage_plots/combined_MPA01_locus2_lin.png',width = 10,height = 4)
+
+# plot log, then save
+ggplot(downsample_test, aes(x=pos, y=log(coverage), colour = Dataset)) + geom_point(alpha=global_alpha) + geom_smooth(span=global_loess_span) + ggtitle(paste("Genome coverage (downsampled randomly):\nMPA01 locus 2")) + xlab("Genome position") + ylab("log (Read depth)")
+ggsave('/home/joe/Documents/all_work/NBIC/projects/ecDNA/20240125_completed_coverage_plots/combined_MPA01_locus2_log.png',width = 10,height = 4)
+```
+
+Next - and this might be insane - but try to merge the whole region for plotting, downsample by 0.01.
+
+```{r,echo=F}
+# combine full data, no subsetting
+# ggplot settings
+global_alpha = 0.15
+global_loess_span = 0.05
+
+# inner join tables, e.g. retain matching columns:
+combine_coverage_traces=inner_join( as_tibble(pk_d0_protK), as_tibble(ecDNA_d03_protK_2019))
+combine_coverage_traces=inner_join(combine_coverage_traces, as_tibble(ecDNA_d03_protK_2021))
+combine_coverage_traces=inner_join(combine_coverage_traces, as_tibble(ecDNA_d13_protK_2019))
+combine_coverage_traces=inner_join(combine_coverage_traces, as_tibble(ecDNA_d13_protK_2021))
+combine_coverage_traces=inner_join(combine_coverage_traces, as_tibble(ecDNA_d13_amylase))
+combine_coverage_traces=inner_join(combine_coverage_traces, as_tibble(ecDNA_d13_cellulase))
+
+# downsample before plotting
+downsampled_all_data1 = sample_frac(combine_coverage_traces,0.005,replace=FALSE)
+
+# gather separate inputs (columns of coverage data from .tdf) to one factorial variable/coverage pair
+reshaped_all_data = gather(downsampled_all_data1, key='Dataset', value='coverage', 3:9)
+
+downsampled_all_data = reshaped_all_data
+
+# try and plot this mofo
+ggplot(downsampled_all_data, aes(x=pos, y=(coverage), colour = Dataset)) +geom_point(alpha=global_alpha) + geom_smooth(span=global_loess_span)  + ggtitle(paste("Genome coverage (downsampled randomly):\n", image_filename)) + xlab("Genome position") + ylab("Read depth")
+ggsave('/home/joe/Documents/all_work/NBIC/projects/ecDNA/20240125_completed_coverage_plots/combined_MPA01_genome_lin.png',width = 10,height = 4)
+# plot again but log coverage
+# try and plot this mofo
+ggplot(downsampled_all_data, aes(x=pos, y=log(coverage), colour = Dataset)) + geom_point(alpha=global_alpha) + geom_smooth(span=global_loess_span)  + ggtitle(paste("Genome coverage (downsampled randomly):\n", image_filename)) + xlab("Genome position") + ylab("Read depth (log)")
+ggsave('/home/joe/Documents/all_work/NBIC/projects/ecDNA/20240125_completed_coverage_plots/combined_MPA01_genome_log.png',width = 10,height = 4)
+```
+
+*NOTE that the downsampling just throws the other 999 points out in each 1,000bp window. It is not an averaging method, for speed.*

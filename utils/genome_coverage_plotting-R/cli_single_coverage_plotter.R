@@ -62,3 +62,5 @@ source(file="plotting_ggplot_plots.R")
 # uses ggplot2, simple version saving to filename only
 bias_ggplot_simple(dataset_downsampled, output_image_file)
 
+# now test the suppress-plot behaviour
+
